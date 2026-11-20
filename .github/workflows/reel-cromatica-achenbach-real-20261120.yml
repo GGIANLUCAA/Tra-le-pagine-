@@ -1,0 +1,38 @@
+name: ArtVision Cromatica REAL - Achenbach 1837
+on:
+  push:
+    branches:
+      - feature/artvision-cromatica-reale-achenbach-20261120
+    paths:
+      - .github/workflows/reel-cromatica-achenbach-real-20261120.yml
+      - tools/reel_cromatica_achenbach_real_20261120.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-authentic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install local multimedia dependencies
+        run: |
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+          ffmpeg -version | head -2
+      - name: Create reel using genuine historical artwork
+        run: python -u tools/reel_cromatica_achenbach_real_20261120.py
+      - name: Upload complete package, mobile package and QA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-ACHENBACH-REAL-REEL-20261120
+          path: |
+            output/reel_achenbach_real/dist/ARTVISION_CROMATICA_REALE_COMPLETO.zip
+            output/reel_achenbach_real/dist/ARTVISION_VIDEO_ANDROID.zip
+            output/reel_achenbach_real/QA_CONTACT_SHEET.jpg
+            output/reel_achenbach_real/EDITOR_REPORT.json
+          if-no-files-found: error
+          retention-days: 30
