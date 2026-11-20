@@ -123,12 +123,12 @@ DIRECTION = {
         "typography_seconds": 4.2,
         "beats": [
             ("detail", 7.6, 0, 0, 1.12, "Long still opening, do not use a fake dramatic hook"),
-            ("detail", 9.3, 1, 2, 1.11, "Slow movement across the wooded setting"),
+            ("detail", 10.8, 1, 2, 1.11, "Slow movement across the wooded setting"),
             ("detail", 5.0, 3, 3, 1.24, "A meaningful pause on one real detail"),
             ("reveal", 5.7, None, None, None, "The whole setting slowly becomes clear"),
-            ("whole", 12.2, None, None, None, "Extended full-artwork hold befitting a sleeping subject"),
+            ("whole", 12.9, None, None, None, "Extended full-artwork hold befitting a sleeping subject"),
             ("approach", 3.5, None, None, None, "Return gently towards the figure"),
-            ("detail", 8.0, 4, 5, 1.12, "End with a very gradual passage; no mandatory final full shot")
+            ("detail", 10.6, 4, 5, 1.12, "End with a very gradual passage; no mandatory final full shot")
         ],
     },
     # New subjects get their own researched plans after source approval.
