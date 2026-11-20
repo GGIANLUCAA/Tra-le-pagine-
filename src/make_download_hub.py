@@ -103,7 +103,9 @@ def library_cards(items):
     for it in items:
         key = it.get("key", "")
         media = f"{LIB}/media/{key}"
-        cover = f"{LIB}/cover/{key}"
+        # catalog gives the cover path without extension; fall back to stripped key
+        cpath = it.get("cover") or f"/cover/{Path(key).stem}"
+        cover = cpath if cpath.startswith("http") else f"{LIB}{cpath}"
         ttl = html.escape(it.get("title") or pretty_name(it))
         cat = html.escape(it.get("category") or "")
         meta = f"{human(it.get('size'))}"
