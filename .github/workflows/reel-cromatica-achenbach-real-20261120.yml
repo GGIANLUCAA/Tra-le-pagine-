@@ -20,8 +20,11 @@ jobs:
           python-version: '3.11'
       - name: Install local multimedia dependencies
         run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
           python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
           ffmpeg -version | head -2
+          ffprobe -version | head -2
       - name: Create reel using genuine historical artwork
         run: python -u tools/reel_cromatica_achenbach_real_20261120.py
       - name: Upload complete package, mobile package and QA
