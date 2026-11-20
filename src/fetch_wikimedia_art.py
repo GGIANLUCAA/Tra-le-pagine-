@@ -8,11 +8,14 @@ social reel renderer.
 
 Usage: fetch_wikimedia_art.py
 """
-import json, subprocess, urllib.parse
+import json, subprocess, time, urllib.parse
 from pathlib import Path
 
 OUT = Path("/tmp/vangogh")
 OUT.mkdir(parents=True, exist_ok=True)
+
+# Wikimedia wants a descriptive User-Agent and throttled downloads (429 otherwise)
+UA = "ArtVisionReel/1.0 (ArtVision social series; https://github.com/GGIANLUCAA)"
 
 # output filename -> Commons search query
 WORKS = {
@@ -34,7 +37,7 @@ API = "https://commons.wikimedia.org/w/api.php"
 
 
 def _get(url):
-    return subprocess.run(["curl", "-s", "--max-time", "40", url],
+    return subprocess.run(["curl", "-s", "-A", UA, "--max-time", "40", url],
                           capture_output=True, text=True, check=True).stdout
 
 
@@ -76,8 +79,17 @@ def main():
             print(f"MISS {fn}: no candidate for '{query}'")
             continue
         dst = OUT / fn
-        subprocess.run(["curl", "-s", "-L", "--max-time", "120", "-o", str(dst), c["url"]], check=True)
+        for attempt in range(4):
+            subprocess.run(["curl", "-s", "-L", "-A", UA, "--max-time", "120",
+                            "-o", str(dst), c["url"]], check=True)
+            with open(dst, "rb") as fh:
+                head = fh.read(8)
+            if head[:3] == b"\xff\xd8\xff" or head[:4] == b"\x89PNG":
+                break
+            print(f"  retry {fn} (got {head[:4]!r}, likely 429)")
+            time.sleep(5 * (attempt + 1))
         print(f"OK   {fn:26s} {c['width']}x{c['height']}  {c['title']}")
+        time.sleep(2)                                  # be gentle on Wikimedia
 
 
 if __name__ == "__main__":

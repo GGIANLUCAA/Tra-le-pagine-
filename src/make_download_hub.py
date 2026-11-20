@@ -24,6 +24,7 @@ LIB = "https://video-library-studio.600led.workers.dev"
 PREVIEW_SUFFIX = "_preview.mp4"   # light 540p proxy used by the in-page player
 
 FRIENDLY = {
+    "REEL_VANGOGH_V5.mp4": "Social Reel V5 — Van Gogh · DIRECTED cut, timing-polished (tagli centrati sul beat, 1080p)",
     "REEL_VANGOGH_V4.mp4": "Social Reel V4 — Van Gogh · DIRECTED cut (dettagli + campo intero + carrellate, 1080p)",
     "REEL_VANGOGH_V3.mp4": "Social Reel V3 — Van Gogh · Gallery cut (quadri interi, fluido)",
     "REEL_VANGOGH_V2.mp4": "Social Reel V2 — Van Gogh · Starry Skies (cinema / beat-locked)",
