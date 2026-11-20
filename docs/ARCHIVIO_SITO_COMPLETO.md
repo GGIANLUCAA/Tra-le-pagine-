@@ -1,6 +1,6 @@
 # Tutto il catalogo pubblico di Video Library Studio
 
-Generato: 2026-11-20T20:06:35+00:00; fonte: live_api.
+Generato: 2026-11-20T23:11:40+00:00; fonte: live_api.
 Indizio solo artista non identifica un quadro né una variante; mai usarlo per concludere che un MP4 è pubblicato.
 Le voci con autore da_verificare non contengono dati sufficienti per identificarlo. Nessuna prova individuale di playback.
 
