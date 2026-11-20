@@ -1,0 +1,49 @@
+name: ArtVision Owner Selected 30 · Cromatica New Reel
+on:
+  push:
+    branches: [feature/artvision-owner30-cromatica-new-20261121]
+    paths:
+      - tools/artvision_owner30_cromatica_reels_v1.py
+      - .github/workflows/artvision-owner30-cromatica-reels-20261121.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-selected:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        index: [0,1,2,3,4,5,6]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install FFmpeg and artwork QA dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+      - name: Render exact owner-selected artwork as NEW independent chromatic variant
+        run: python -u tools/artvision_owner30_cromatica_reels_v1.py --index ${{ matrix.index }}
+      - name: Upload verified Android video and complete pack
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-OWNER30-CROMATICA-${{ matrix.index }}
+          path: |
+            output/artvision_owner30_cromatica/*/*_ARTVISION_REEL.mp4
+            output/artvision_owner30_cromatica/*/*_META_SENZA_MUSICA.mp4
+            output/artvision_owner30_cromatica/*/*_COVER.jpg
+            output/artvision_owner30_cromatica/*/*_QA.jpg
+            output/artvision_owner30_cromatica/*/SOURCES_AND_RIGHTS.md
+            output/artvision_owner30_cromatica/*/QA_AND_EDIT.json
+            output/artvision_owner30_cromatica/*/POST_*.txt
+            output/artvision_owner30_cromatica/*/dist/*_COMPLETO.zip
+            output/artvision_owner30_cromatica/*/dist/*_ANDROID.zip
+            output/artvision_owner30_cromatica/*/dist/*_META.zip
+          if-no-files-found: error
+          retention-days: 30
