@@ -1,0 +1,42 @@
+name: ArtVision 10 - Repair Sunset on Sea only
+on:
+  push:
+    branches: [feature/artvision-cromatica-ten-real-artworks-20261120]
+    paths:
+      - .github/workflows/artvision-cromatica-recovery-kensett.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  recover-index-5:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Prepare FFmpeg and Python
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+      - name: Render John Frederick Kensett only
+        run: python -u tools/artvision_cromatica_batch_ten_20261120.py --index 5
+      - name: Upload verified reel
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-CROMATICA-REAL-5-RECOVERY
+          path: |
+            output/artvision_cromatica_ten/*/*.mp4
+            output/artvision_cromatica_ten/*/*_COVER.jpg
+            output/artvision_cromatica_ten/*/*_QA.jpg
+            output/artvision_cromatica_ten/*/QA_AND_EDIT.json
+            output/artvision_cromatica_ten/*/SOURCES_AND_RIGHTS.md
+            output/artvision_cromatica_ten/*/POST_*.txt
+            output/artvision_cromatica_ten/*/dist/*_COMPLETO.zip
+            output/artvision_cromatica_ten/*/dist/*_ANDROID.zip
+            output/artvision_cromatica_ten/*/dist/*_META.zip
+          if-no-files-found: error
+          retention-days: 30
