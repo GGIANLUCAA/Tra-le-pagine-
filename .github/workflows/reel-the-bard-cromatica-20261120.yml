@@ -1,0 +1,46 @@
+name: ArtVision Cromatica · The Bard John Martin 1817
+on:
+  push:
+    branches:
+      - feature/artvision-reel-the-bard-real-20261120
+    paths:
+      - tools/reel_the_bard_cromatica_v1_20261120.py
+      - .github/workflows/reel-the-bard-cromatica-20261120.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-master:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install media dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+          ffmpeg -version | head -1
+      - name: Render and audit genuine artwork reel
+        run: python -u tools/reel_the_bard_cromatica_v1_20261120.py
+      - name: Upload video and review package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-JOHN-MARTIN-THE-BARD-REAL-VIDEO
+          path: |
+            output/reel_the_bard_1817/JOHN_MARTIN_THE_BARD_REEL_2026.mp4
+            output/reel_the_bard_1817/JOHN_MARTIN_THE_BARD_FACEBOOK_AUDIO.mp4
+            output/reel_the_bard_1817/COVER_THE_BARD.jpg
+            output/reel_the_bard_1817/QA_SHOT_CONTACT.jpg
+            output/reel_the_bard_1817/SOURCES_AND_RIGHTS.md
+            output/reel_the_bard_1817/RECIPE_AND_QA.json
+            output/reel_the_bard_1817/META_AUDIO_GUIDE.txt
+            output/reel_the_bard_1817/dist/THE_BARD_ARTVISION_COMPLETO.zip
+            output/reel_the_bard_1817/dist/THE_BARD_VIDEO_ANDROID.zip
+            output/reel_the_bard_1817/dist/THE_BARD_FACEBOOK_SENZA_AUDIO.zip
+          if-no-files-found: error
+          retention-days: 30
