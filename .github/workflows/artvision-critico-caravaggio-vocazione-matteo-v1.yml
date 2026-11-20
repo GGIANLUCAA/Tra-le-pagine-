@@ -1,0 +1,93 @@
+name: "ArtVision Critico V2 - Caravaggio La vocazione di San Matteo (master verticale)"
+run-name: "CRITICO · Caravaggio vocazione Matteo · master 1080x1920"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "artvision/owner-munch-vampire-cinema-20261112"
+    paths:
+      - ".github/workflows/artvision-critico-caravaggio-vocazione-matteo-v1.yml"
+      - "modules/artvision_critico/production_series/caravaggio_vocazione_matteo.json"
+      - "modules/artvision_critico/production_series/render_series_v2.py"
+      - "src/gemini_voice.py"
+permissions:
+  contents: read
+concurrency:
+  group: artvision-critico-caravaggio-vocazione-matteo
+  cancel-in-progress: true
+jobs:
+  produzione:
+    name: "Video caravaggio_vocazione_matteo — master verticale narrativo"
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - name: "Checkout non distruttivo"
+        uses: actions/checkout@v4
+      - name: "Python 3.11"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Installa strumenti, verifica copione e sorgente"
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core libsndfile1
+          python -m pip install --disable-pip-version-check \
+            "numpy>=1.26,<3" "Pillow>=10,<13" "opencv-python-headless>=4.8,<5" \
+            "edge-tts>=6.1,<9" "soundfile>=0.12,<1" "google-genai>=2.25,<4" "scipy>=1.11,<2"
+          python -m py_compile modules/artvision_critico/production_series/render_series_v2.py
+          python -c "import sys;sys.path.insert(0, 'modules/artvision_critico');import render_dali;print('ArtVision module import OK')"
+          python - <<'PY'
+          import json,re
+          from pathlib import Path
+          p=Path("modules/artvision_critico/production_series/caravaggio_vocazione_matteo.json")
+          c=json.loads(p.read_text(encoding="utf8"))
+          assert re.fullmatch(r"[a-z0-9][a-z0-9_-]{2,80}",c["id"]),c["id"]
+          for k in ("artist","artwork","commons_title","image_ratio_min","image_ratio_max","sources","beats","music"):
+              assert k in c,k
+          assert c["language"]=="it"
+          assert len(c["beats"])>=8
+          assert all(b.get("speech") and len(b.get("focus",[]))==2 for b in c["beats"])
+          print("EPISODE READY",c["id"],len(c["beats"]),"beats")
+          PY
+      - name: "Produci e sincronizza quadro, zoom e voce naturale (Gemini Gacrux)"
+        run: |
+          python modules/artvision_critico/production_series/render_series_v2.py \
+            --config modules/artvision_critico/production_series/caravaggio_vocazione_matteo.json \
+            --require-gacrux
+      - name: "Verifica il master completo — non archiviare simulazioni o immagini statiche"
+        run: |
+          python - <<'PY'
+          import json,subprocess
+          from pathlib import Path
+          key="caravaggio_vocazione_matteo"
+          out=Path("output/artvision-serie-quattro")/key
+          mp4=out/("ARTVISION_"+key.upper()+".mp4")
+          assert mp4.exists() and mp4.stat().st_size>8_000_000
+          x=json.loads(subprocess.check_output(["ffprobe","-v","error","-show_entries",
+            "format=duration,size:stream=codec_type,width,height","-of","json",str(mp4)]))
+          tracks={t["codec_type"] for t in x["streams"]}
+          assert tracks=={"video","audio"},tracks
+          vid=next(z for z in x["streams"] if z["codec_type"]=="video")
+          assert (vid["width"],vid["height"])==(1080,1920)
+          assert 95<float(x["format"]["duration"])<440
+          assert (out/"COPERTINA.jpg").stat().st_size>70_000
+          m=json.loads((out/"REGIA_SINCRONIZZAZIONE.json").read_text(encoding="utf8"))
+          assert m["subtitle_overlay"] is False
+          assert len(m["beats"])>=8
+          print("VALIDATED MP4",key,x["format"]["duration"],mp4.stat().st_size,flush=True)
+          PY
+      - name: "Archivia MP4, copertina universale, voce IT, fonti e tempi"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_CRITICO_CARAVAGGIO_VOCAZIONE_MATTEO
+          path: |
+            output/artvision-serie-quattro/caravaggio_vocazione_matteo/ARTVISION_*.mp4
+            output/artvision-serie-quattro/caravaggio_vocazione_matteo/COPERTINA.jpg
+            output/artvision-serie-quattro/caravaggio_vocazione_matteo/COPIONE_IT.txt
+            output/artvision-serie-quattro/caravaggio_vocazione_matteo/REGIA_SINCRONIZZAZIONE.json
+            output/artvision-serie-quattro/caravaggio_vocazione_matteo/DIRITTI_E_FONTI.txt
+          if-no-files-found: error
+          retention-days: 14
