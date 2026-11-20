@@ -1,0 +1,435 @@
+{
+  "format": "artvision_meraviglia_breve",
+  "format_profile": "config/reel_cromatica_v1.json",
+  "artist": "Ivan Aivazovsky",
+  "artistic_review_complete": false,
+  "episode": {
+    "title": "El pintor de las tormentas",
+    "title_formula": "speciality",
+    "channel_language": "es",
+    "series": "maestros con oficio reconocible",
+    "target_duration_seconds": 23.6,
+    "duration_justification": "Dieci inquadrature per tre motivo (mani e luce, mare in tempesta, mare dopo la tempesta): il tempo deriva dalle pause dell'opera e dal fraseggio del brano, non da una regola fissa. La durata non coincide con i 28,17 s del campione di riferimento.",
+    "reference_duration_delta_seconds": 4.57
+  },
+  "packaging": {
+    "system": "chip",
+    "title_formula": "speciality",
+    "visible_from_s": 0,
+    "visible_until_s": 4.7,
+    "in_cover_frame": true,
+    "no_text_after_s": 20.6,
+    "note": "La persistenza esatta del chip non è osservabile dagli screenshot: qui finisce dopo l'apertura, sul primo respiro. Da decidere episodio per episodio."
+  },
+  "music": {
+    "title": "Night on the Docks - Piano",
+    "composer": "Kevin MacLeod",
+    "source_url": "https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100135",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "license": "CC BY 4.0",
+    "isrc": "USUAN1100135",
+    "instrumental": true,
+    "recording_verified": false,
+    "edits": "estratto da 0:00, dissolvenza finale di 0,6 s, volume a -14 LUFS integrati",
+    "note": "Traccia con download non ancora testato (modules/artvision/music_library.json → download_tested false): verificare la registrazione specifica con ffprobe prima del montaggio. Alternativa lenta: Ever Mindful (strings)."
+  },
+  "scenes": [
+    {
+      "artwork": "The Ninth Wave",
+      "framing": "detail",
+      "move": "push_in",
+      "visual_hook": true,
+      "purpose": "Ancora il gancio sulle mani e sul tessuto che sventolano nella luce radente, prima di ogni nome",
+      "start": 0,
+      "end": 1.9,
+      "visual_anchor": "mani e panno levati sull'albero fracassato",
+      "visual_purpose": "hook",
+      "camera_reason": "Avvicinamento lento per isolare il gesto umano che regge il dipinto",
+      "on_screen_text": {
+        "system": "chip",
+        "rows": [
+          {
+            "text": "El pintor de las tormentas",
+            "background": "#000000",
+            "text_color": "#FFFFFF",
+            "weight": "bold"
+          },
+          {
+            "text": "Ivan Aivazovsky",
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular"
+          },
+          {
+            "text": "🇷🇺 Rusia",
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular"
+          }
+        ]
+      },
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "The Ninth Wave",
+      "framing": "full_artwork",
+      "move": "static",
+      "purpose": "Rivela l'opera intera: il naufragio e la luce sull'acqua, con il respiro dopo il gancio",
+      "start": 1.9,
+      "end": 4.7,
+      "visual_anchor": "luce radente sull'acqua e barche alla deriva in piccola scala",
+      "visual_purpose": "reveal",
+      "camera_reason": "Camera ferma: l'opera deve respirare intera prima di tornare al dettaglio",
+      "on_screen_text": {
+        "system": "chip",
+        "rows": [
+          {
+            "text": "El pintor de las tormentas",
+            "background": "#000000",
+            "text_color": "#FFFFFF",
+            "weight": "bold"
+          },
+          {
+            "text": "Ivan Aivazovsky",
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular"
+          },
+          {
+            "text": "🇷🇺 Rusia",
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular"
+          }
+        ]
+      },
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "Gathering Storm",
+      "framing": "detail",
+      "move": "pan_right",
+      "purpose": "Spostare il fuoco dall'uomo al cielo: l'albero e la vela che si preparano al peggio",
+      "start": 4.7,
+      "end": 6.3,
+      "visual_anchor": "albero e vela contro il cielo che si scurisce",
+      "visual_purpose": "tension",
+      "camera_reason": "Scorrimento orizzontale per seguire la diagonale della vela",
+      "source_verified": true,
+      "visual_verified": false,
+      "rhythm_justification": "Taglio breve in battuta: il passaggio dall'opera intera al cielo chiude il primo atto"
+    },
+    {
+      "artwork": "The Black Sea",
+      "framing": "detail",
+      "move": "push_in",
+      "purpose": "Entrare nella materia dell'acqua: la cresta scura che contiene la tempesta",
+      "start": 6.3,
+      "end": 8.4,
+      "visual_anchor": "cresta verde e acqua nerastra",
+      "visual_purpose": "tension",
+      "camera_reason": "Avvicinamento sulla cresta: la texture diventa la notte",
+      "complex_detail": true,
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "The Rainbow",
+      "framing": "medium",
+      "move": "detail_reveal",
+      "purpose": "Contrasto cromatico: dalla pioggia all'arco di luce sulla barca",
+      "start": 8.4,
+      "end": 11.2,
+      "visual_anchor": "arco dell'iride sulla barca in mezzo al mare",
+      "visual_purpose": "contrast",
+      "camera_reason": "Rivelazione progressiva dall'arco alla barca che lo attraversa",
+      "complex_detail": true,
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "Brig Mercury Attacked by Two Turkish Ships",
+      "framing": "portrait",
+      "move": "pan_left",
+      "purpose": "Ritratto verticale dell'albero in battaglia: la tela orizzontale diventa una colonna",
+      "start": 11.2,
+      "end": 12.8,
+      "visual_anchor": "albero, cordame e bandiera della nave",
+      "visual_purpose": "human_focus",
+      "camera_reason": "Scorrimento laterale per leggere l'attrezzatura della nave come una verticale",
+      "source_verified": true,
+      "visual_verified": false,
+      "rhythm_justification": "Breve e secco: la nave deve entrare come un colpo, non come una descrizione"
+    },
+    {
+      "artwork": "Among the Waves",
+      "framing": "landscape",
+      "move": "static",
+      "purpose": "Respiro: il mare svuotato di ogni barca dopo la tempesta",
+      "start": 12.8,
+      "end": 16.0,
+      "visual_anchor": "onde lunghe e nessuna presenza umana",
+      "visual_purpose": "breath",
+      "camera_reason": "Camera ferma sul vuoto: qui il montaggio tace",
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "End of Storm",
+      "framing": "detail",
+      "move": "pan_right",
+      "purpose": "L'ultima luce sulla traccia dell'acqua: la tempesta si allontana",
+      "start": 16.0,
+      "end": 17.8,
+      "visual_anchor": "luce residua sulla superficie del mare",
+      "visual_purpose": "recovery",
+      "camera_reason": "Scorrimento orizzontale lungo la fascia di luce",
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "Sunset at Sea",
+      "framing": "full_artwork",
+      "move": "pull_out",
+      "purpose": "Chiusura sull'opera intera al tramonto, non su un cartello",
+      "start": 17.8,
+      "end": 21.5,
+      "visual_anchor": "striscia di tramonto sull'orizzonte",
+      "visual_purpose": "payoff",
+      "camera_reason": "Allontanamento per restituire l'opera intera prima del ritorno finale",
+      "source_verified": true,
+      "visual_verified": false
+    },
+    {
+      "artwork": "The Ninth Wave",
+      "framing": "detail",
+      "move": "push_in",
+      "purpose": "Ritorno circolare al motivo di apertura: le mani che salutano",
+      "start": 21.5,
+      "end": 23.6,
+      "visual_anchor": "mani e panno nella stessa luce radente del primo shot",
+      "visual_purpose": "payoff",
+      "camera_reason": "Stessa genesi del primo shot: chiudere il cerchio sul gesto, non sull'immagine",
+      "source_verified": true,
+      "visual_verified": false
+    }
+  ],
+  "sources": [
+    {
+      "artwork": "The Ninth Wave",
+      "url": "https://commons.wikimedia.org/wiki/File:Hovhannes_Aivazovsky_-_The_Ninth_Wave_-_Google_Art_Project.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, The Ninth Wave (1850), public domain, via Wikimedia Commons",
+      "year": "1850",
+      "pixel_size": [
+        5090,
+        3420
+      ],
+      "usable_width_px_9_16": 1923,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "Gathering Storm",
+      "url": "https://commons.wikimedia.org/wiki/File:Ivan_Konstantinovich_Aivazovsky_-_Gathering_Storm%2C_1899.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, Gathering Storm (1899), public domain, via Wikimedia Commons",
+      "year": "1899",
+      "pixel_size": [
+        2000,
+        1307
+      ],
+      "usable_width_px_9_16": 735,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "The Black Sea",
+      "url": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%B2%D0%B0%D0%BD_%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%87_%D0%90%D0%B9%D0%B2%D0%B0%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9_-_%D0%A7%D0%B5%D1%80%D0%BD%D0%BE%D0%B5_%D0%BC%D0%BE%D1%80%D0%B5_%28%D0%BD%D0%B0_%D0%A7%D0%B5%D1%80%D0%BD%D0%BE%D0%BC_%D0%BC%D0%BE%D1%80%D0%B5_%D0%BD%D0%B0%D1%87%D0%B8%D0%BD%D0%B0%D0%B5%D1%82_%D1%80%D0%B0%D0%B7%D1%8B%D0%B3%D1%80%D1%8B%D0%B2%D0%B0%D1%82%D1%8C%D1%81%D1%8F_%D0%B1%D1%83%D1%80%D1%8F%29_-_Google_Art_Project.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, The Black Sea (1881), public domain, via Wikimedia Commons",
+      "year": "1881",
+      "pixel_size": [
+        4000,
+        2870
+      ],
+      "usable_width_px_9_16": 1614,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "The Rainbow",
+      "url": "https://commons.wikimedia.org/wiki/File:%D0%90%D0%B9%D0%B2%D0%B0%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9_%28%D0%93%D0%B0%D0%B9%D0%B2%D0%B0%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9%29_%D0%98%D0%B2%D0%B0%D0%BD_%28%D0%9E%D0%B3%D0%B0%D0%BD%D0%B5%D1%81%29_%D0%9A%D0%BE%D0%BD%D1%81%D1%82%D0%B0%D0%BD%D1%82%D0%B8%D0%BD%D0%BE%D0%B2%D0%B8%D1%87_%D0%A0%D0%B0%D0%B4%D1%83%D0%B3%D0%B0.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, The Rainbow (1873), public domain, via Wikimedia Commons",
+      "year": "1873",
+      "pixel_size": [
+        1539,
+        1200
+      ],
+      "usable_width_px_9_16": 675,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "Brig Mercury Attacked by Two Turkish Ships",
+      "url": "https://commons.wikimedia.org/wiki/File:Aivazovsky%2C_Brig_Mercury_Attacked_by_Two_Turkish_Ships_1892.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, Brig Mercury Attacked by Two Turkish Ships (1892), public domain, via Wikimedia Commons",
+      "year": "1892",
+      "pixel_size": [
+        2220,
+        1400
+      ],
+      "usable_width_px_9_16": 787,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "Among the Waves",
+      "url": "https://commons.wikimedia.org/wiki/File:Ivan_Konstantinovich_Aivazovsky_-_Among_the_Waves%2C_1898.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, Among the Waves (1898), public domain, via Wikimedia Commons",
+      "year": "1898",
+      "pixel_size": [
+        1980,
+        1226
+      ],
+      "usable_width_px_9_16": 689,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "End of Storm",
+      "url": "https://commons.wikimedia.org/wiki/File:Aivazovsky_End_of_Storm.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, End of Storm (1839), public domain, via Wikimedia Commons",
+      "year": "1839",
+      "pixel_size": [
+        1784,
+        1200
+      ],
+      "usable_width_px_9_16": 675,
+      "used_in_episode": true
+    },
+    {
+      "artwork": "Sunset at Sea",
+      "url": "https://commons.wikimedia.org/wiki/File:%D0%98%D0%B2%D0%B0%D0%BD_%D0%9A._%D0%B0%D0%B9%D0%B2%D0%B0%D0%B7%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9_-_%D0%97%D0%B0%D0%BA%D0%B0%D1%82_%D0%BD%D0%B0_%D0%BC%D0%BE%D1%80%D0%B5_%281877%29.jpg",
+      "reuse_terms": "Public domain",
+      "attribution": "Aivazovsky, Sunset at Sea (1877), public domain, via Wikimedia Commons",
+      "year": "1877",
+      "pixel_size": [
+        2985,
+        1572
+      ],
+      "usable_width_px_9_16": 884,
+      "used_in_episode": true
+    }
+  ],
+  "editorial": {
+    "opening": "El mar de Aivazovsky nunca está quieto: es un retrato de la luz sobre el agua.",
+    "body": "Nació en Feodosia en 1817 y murió en Tiflis en 1900. Pintó el mar como otros pintan retratos: con anatomía, con gesto, con memoria. En La Novena Ola, de 1850, unos náufragos saludan con un paño desde un mástil mientras la luz vuelve sobre el agua. En Entre las olas, de 1898, ya no queda nadie: solo el oleaje y el frío. Entre una obra y otra hay exactamente lo que él hacía: mirar el mar horas enteras y esperar el momento en que la luz cae donde debe.",
+    "question": "",
+    "hashtags": [
+      "#Aivazovsky",
+      "#HistoriaDelArte",
+      "#Pintura"
+    ],
+    "fact_sources_checked": false,
+    "facts_pending": [
+      "date e luogo di nascita (Feodosia, 1817) e di morte (Tiflis, 1900)",
+      "titolo spagnolo corrente dei due dipinti citati e relativi anni",
+      "descrizione dei naufraghi che sventolano in La Novena Ola",
+      "affermazione che in Entre las olas (1898) non compaiono barche",
+      "etichetta di paese e bandiera (🇷🇺 Rusia) secondo una fonte primaria"
+    ]
+  },
+  "audience_research": {
+    "policy": "docs/ARTVISION_AUDIENCE_RESEARCH_V32.md",
+    "selection_mode": "research_selected",
+    "explicit_user_instruction": "",
+    "selected_work": "The Ninth Wave",
+    "selection_reason": "È l'unico dei tre confrontati che regge il formato su tutti i piani insieme: primo fotogramma con gesto umano leggibile, molteplici dettagli che cambiano la lettura, arco narrativo costruibile (tempesta → dopo la tempesta), formula di titolo 1 verificabile ('El pintor de las tormentas') e un corpus ampio di opere dello stesso artista in pubblico dominio, che permette l'alternanza dettaglio/opera intera richiesta dal packaging.",
+    "viewer_interest": "Il mare che cambia colore davanti a un essere umano: il gancio è la differenza fra le mani che lottano e il mare vuoto. Curiosità autentica e verificabile: un artista che dipingeva il mare dopo averlo osservato per ore.",
+    "creative_direction": "Dettaglio → opera intera → tensione → respiro → ritorno circolare sul motivo di apertura; chiusura sull'opera, mai su un cartello.",
+    "signal_limitations": "Nessun dato di performance verificato disponibile: nessuna retention, nessuna reach, nessuna tendenza misurata. Le valutazioni sono un giudizio editoriale interno, non una misura di pubblico. I segnali del pubblico sono dichiarati indisponibili, non stimati.",
+    "analytics_feedback": "not_yet_published",
+    "candidates": [
+      {
+        "artist": "Ivan Aivazovsky",
+        "work": "The Ninth Wave",
+        "visual_hook": "Mani e panno levati sull'albero fracassato, contro la luce radente: il gesto umano si legge nel primo fotogramma anche a thumbnail.",
+        "human_interest": "Un pittore che passava la giornata sulla costa a guardare le tempeste prima di dipingerle a memoria: il mestiere è la storia.",
+        "historical_anchor": "State Russian Museum, San Pietroburgo; opera del 1850, verificata su Wikimedia Commons con URL, dimensioni e licenza (pubblico dominio).",
+        "asset_rights_notes": "Opere in pubblico dominio, file Wikimedia Commons verificati il 21/11/2026; 8 opere dello stesso artista con larghezza utile dopo il crop 9:16 compresa fra 675 e 1923 px. La registrazione musicale resta da validare con ffprobe.",
+        "comparison_reason": "Corpus ampio e coerente: permette l'alternanza dettaglio/opera intera senza cambiare artista e senza duplicare i crop. Formula di titolo 1 naturale e verificabile.",
+        "audience_signal": {
+          "status": "unavailable",
+          "reason": "Nessun dato di reach, retention o tendenza verificabile su canali o piattaforme per questa opera; i numeri di visualizzazione della pagina di riferimento non sono misure di performance."
+        },
+        "editorial_score": {
+          "observed_audience_interest": "non valutabile",
+          "first_frame_visual_strength": 18,
+          "authentic_story_and_curiosity": 19,
+          "directing_potential": 15,
+          "catalog_originality": 8,
+          "source_quality_and_rights": 9,
+          "total": 69,
+          "note": "Somma delle sole dimensioni valutabili: l'interesse osservato resta non valutabile e non è sostituito da un valore inventato."
+        }
+      },
+      {
+        "artist": "Katsushika Hokusai",
+        "work": "La Grande Onda (The Great Wave off the Coast of Kanagawa)",
+        "visual_hook": "La cresta ad artigli con le dita di schiuma e il Fuji minuscolo al centro: lettura istantanea e forte in verticale.",
+        "human_interest": "Il maestro delle stampe che ha reso un'onda un essere vivente, in un'opera circolare in tre formati di epoca.",
+        "historical_anchor": "The Metropolitan Museum of Art, New York; edizione nota come Grande Onda di Kanagawa, circa 1830–1832.",
+        "asset_rights_notes": "Stampa giapponese in pubblico dominio; esemplari ad alta risoluzione verificati al Met e su Wikimedia Commons. Le stampe originali sono più piccole e più delicate del crop 9:16 richiesto.",
+        "comparison_reason": "Gancio e dettaglio migliori di tutti, ma un solo foglio con molteplici dettagli: l'arco di 10 inquadrature richiederebbe di ricomporre la tavola o usare opere diverse dello stesso artista, indebolendo la coerenza dell'insieme.",
+        "audience_signal": {
+          "status": "unavailable",
+          "reason": "Nessun dato verificato di performance su questa opera o sull'artista; l'osservabilità del formato non sostituisce un segnale di pubblico."
+        },
+        "editorial_score": {
+          "observed_audience_interest": "non valutabile",
+          "first_frame_visual_strength": 20,
+          "authentic_story_and_curiosity": 17,
+          "directing_potential": 11,
+          "catalog_originality": 6,
+          "source_quality_and_rights": 8,
+          "total": 62,
+          "note": "Perdita nella regia: un solo foglio non regge 10 inquadrature distinte senza ricomporre l'opera."
+        }
+      },
+      {
+        "artist": "J. M. W. Turner",
+        "work": "The Fighting Temeraire",
+        "visual_hook": "Il veliero fantasma trainato dal piccolo piroscafo contro un tramonto: il contrasto di scala è immediato anche in copertina.",
+        "human_interest": "La fine dell'età della vela e un artista che dipingeva la luce come nessun altro: storia vera e contemporanea al soggetto.",
+        "historical_anchor": "National Gallery, London, NG524; dipinto del 1839, con le modifiche storiche dell'artista dichiarate dai cataloghi ufficiali.",
+        "asset_rights_notes": "Opera in pubblico dominio con file Wikimedia Commons; l'affidabilità della fonte museale è alta. Restano da verificare i diritti specifici della registrazione fotografica usata per il crop verticale.",
+        "comparison_reason": "Migliore appoggio documentale e di formula ('El pintor de la luz'), ma il tema della luce è già saturo nel catalogo e il soggetto non consente il passaggio dettaglio → opera intera richiesto dal packaging a 10 inquadrature.",
+        "audience_signal": {
+          "status": "unavailable",
+          "reason": "Nessun dato verificato di performance per questa opera; inoltre il tema della luce compare già in produzioni del catalogo."
+        },
+        "editorial_score": {
+          "observed_audience_interest": "non valutabile",
+          "first_frame_visual_strength": 15,
+          "authentic_story_and_curiosity": 18,
+          "directing_potential": 10,
+          "catalog_originality": 4,
+          "source_quality_and_rights": 9,
+          "total": 56,
+          "note": "Penalità di originalità: il tema è già coperto da produzioni esistenti."
+        }
+      }
+    ]
+  },
+  "social_posts": {
+    "note": "Quattro testi realmente distinti per canale (V28). L'editoriale sopra è la didascalia unificata che genera V19; questi quattro sono le versioni pubblicate.",
+    "facebook": "Aivazovsky nació en Feodosia, Crimea, en 1817, y pasó la vida entre el taller y el mar. Antes de cada lienzo había horas mirando el agua desde la costa.\n\nEn La Novena Ola, de 1850, unos náufragos se agarran a los restos de una nave mientras la luz vuelve sobre el mar. En Entre las olas, de 1898, que pintó a los ochenta y un años, ya no queda nadie: solo el oleaje y el frío. Entre un cuadro y otro hay exactamente lo que él hacía: esperar, mirar el mar, y decidir el momento en que la luz cae donde debe.\n\n🎵 Night on the Docks - Piano — Kevin MacLeod (CC BY 4.0)\n\n#Aivazovsky #Pintura #HistoriaDelArte",
+    "instagram": "El mar no es un fondo en Aivazovsky: es un retrato.\n\nNació en Feodosia en 1817 y murió en Tiflis en 1900. En La Novena Ola, de 1850, los náufragos saludan desde un mástil mientras la luz regresa sobre el mar. En Entre las olas, de 1898, no queda ninguna figura: solo el oleaje, con más fuerza.\n\nEn una escena de 1873, la lluvia se abre y el agua se enciende de golpe. Es lo que hacía una y otra vez: fijar el instante en que el mar cambia de color.\n\n🎵 Night on the Docks - Piano — Kevin MacLeod (CC BY 4.0)\n\n#Aivazovsky #Mar #HistoriaDelArte",
+    "tiktok": "¿Por qué el mar de Aivazovsky parece movimiento congelado? Porque lo pintaba de memoria, después de horas mirando la tormenta desde la costa.\n\nLa Novena Ola, 1850: unos náufragos saludan con un paño desde un mástil mientras la luz vuelve sobre el agua.\n\nEntre las olas, 1898: ya no queda nadie. Solo el oleaje y el frío.\n\nNació en Feodosia en 1817 y murió en Tiflis en 1900.\n\n🎵 Night on the Docks - Piano — Kevin MacLeod (CC BY 4.0)\n\n#Aivazovsky #Pintura #Arte",
+    "youtube": "Aivazovsky: el pintor que hizo del mar un retrato — La Novena Ola y Entre las olas\n\nIvan Aivazovsky (1817–1900) pintó una vida entera de tempestades. Nació en Feodosia, Crimea, y trabajó entre el taller y el mar: cada cuadro nacía de horas de observación directa.\n\nLa Novena Ola (1850) recoge un instante de salvación: los naufragios aferrados a los restos del barco mientras la luz regresa sobre el agua. En Entre las olas (1898), pintado a los ochenta y un años, no queda nadie: solo el mar.\n\nObras y licencias: The Ninth Wave (1850), Among the Waves (1898), Gathering Storm (1899), The Black Sea (1881), The Rainbow (1873), Brig Mercury (1892), End of Storm (1839), Sunset at Sea (1877) — dominio público, vía Wikimedia Commons.\n\nMúsica: Night on the Docks - Piano, Kevin MacLeod, licencia CC BY 4.0.\n\n#Aivazovsky #HistoriaDelArte #Pintura"
+  },
+  "direction_mode": "reel_cromatica_v1",
+  "direction_note": "Piano candidato per il clone del reel «Enfermedad cromática». Opera il linguaggio (chip a tre righe, formula «El/La [professione] de [specialità]», alternanza dettaglio/opera intera, contrasto velocità-quieto, chiusura sull'opera) senza riutilizzare filmato, audio, fotogrammi, timing o numero di immagini del campione. Le fonti delle opere sono file Wikimedia Commons verificati in pubblico dominio il 21/11/2026; le crop verticali vanno controllate a occhio prima del montaggio.",
+  "candidate_only": true
+}

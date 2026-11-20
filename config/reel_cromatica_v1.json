@@ -1,0 +1,528 @@
+{
+  "schema_version": 1,
+  "id": "reel_cromatica_v1",
+  "label": "Reel verticale «Enfermedad cromática» — clone di linguaggio visivo",
+  "created_on": "2026-11-21",
+  "status": "candidate_not_registered",
+  "candidate_only": true,
+  "registered_in_approved_sources": false,
+  "scope": "filone verticale breve in stile pagina di divulgazione artistica spagnola",
+  "doc": "docs/REGIA_REEL_CROMATICA_V1_20261121.md",
+  "brief_template": "templates/REEL_CROMATICA_V1_CANDIDATE.json",
+  "schema_validator": "src/artvision_editor_v19.py",
+  "profile_gate": "src/reel_cromatica_v1_gate.py",
+  "precedence_note": "Questo profilo NON si inserisce sopra config/editorial_rules.json né sopra config/video_formats_v13.json: fonti approvate, da non modificare senza approvazione esplicita. Vive come candidato e diventa format solo dopo registrazione approvata.",
+  "format_key_used_by_v19": "artvision_meraviglia_breve",
+  "format_key_note": "Il validatore V19 accetta solo artvision_cinema, artvision_meraviglia_breve, artvision_enigma. Il clone usa il veicolo artvision_meraviglia_breve (testo minimo consentito) finché il nuovo formato non viene registrato nelle fonti approvate.",
+  "reference": {
+    "source": "reel e pagina forniti dall'utente",
+    "analysis": "modules/artvision/REGIA_CINEMA_WOW_V2.md",
+    "usage": "language_only",
+    "reference_sample_measured": {
+      "duration_seconds": 28.17,
+      "aspect_ratio": "9:16",
+      "fps": 30
+    },
+    "do_not_copy": [
+      "timing",
+      "image_count",
+      "shot_order",
+      "film_footage",
+      "audio",
+      "music_track",
+      "frames",
+      "photos",
+      "overlay_timing"
+    ],
+    "do_not_copy_reference_video_timing_or_image_count": true
+  },
+  "delivery": {
+    "resolution": [
+      720,
+      1280
+    ],
+    "aspect_ratio": "9:16",
+    "fps": 30,
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "container": "mp4",
+    "loudness_lufs_integrated": [
+      -14,
+      -15
+    ],
+    "true_peak_dbtp_max": -1.0,
+    "duration_seconds": {
+      "min": 22,
+      "max": 30,
+      "decided_by": "content_and_actual_audio",
+      "must_differ_from_reference_by_seconds": 1.0,
+      "fixed_duration_is_a_retired_constraint": true
+    },
+    "subtitles": false,
+    "subtitle_burn_in": false,
+    "subtitle_tracks": 0,
+    "subtitle_files": false,
+    "one_image_per_frame": true,
+    "ghosting": false,
+    "logo_watermark_or_handle_in_video": false
+  },
+  "narration": {
+    "optional": true,
+    "language_per_channel": true,
+    "never_replaces_music": true,
+    "must_not_be_subtitled": true,
+    "phrases": "frasi corte"
+  },
+  "packaging": {
+    "observed_from_screenshots": true,
+    "text_color_rule": "testo sempre bianco su fondale scuro o su chip; mai bianco su dipinto chiaro senza chip",
+    "no_text_in_final_seconds": 3,
+    "systems": [
+      {
+        "id": "chip",
+        "label": "Sistema A — chip a tre righe",
+        "usage_share_observed": "~60% dei reel osservati",
+        "anchor": "stack verticale centrato in orizzontale, blocco appena sopra il centro",
+        "block_top_percent_of_height": 44,
+        "row_gap_px": 8,
+        "padding_px": {
+          "horizontal": 18,
+          "vertical": 8
+        },
+        "corner_radius_px": 8,
+        "max_block_width_percent": 82,
+        "rows": [
+          {
+            "row": 1,
+            "role": "hook_title",
+            "required": true,
+            "background": "#000000",
+            "text_color": "#FFFFFF",
+            "weight": "bold",
+            "font_size_px": 34,
+            "font_stack": "sans, condensed, bold"
+          },
+          {
+            "row": 2,
+            "role": "artist_name",
+            "required": true,
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular",
+            "font_size_px": 26
+          },
+          {
+            "row": 3,
+            "role": "country_flag",
+            "required": true,
+            "background": "#FFFFFF",
+            "text_color": "#000000",
+            "weight": "regular",
+            "font_size_px": 22,
+            "flag_as_emoji": true
+          }
+        ],
+        "row1_is_the_feed_anchor": true,
+        "note": "La riga 1 è sempre presente: è ciò che rende il reel riconoscibile dalla griglia a tre colonne senza aprire il post."
+      },
+      {
+        "id": "serif_cartello",
+        "label": "Sistema B — cartello serif per maestri canonici",
+        "usage_share_observed": "presente sui nomi già istituzionali",
+        "background_plate": "none",
+        "text_color": "#FFFFFF",
+        "typeface": "serif Didone ad alto contrasto (Playfair Display, Bodoni Moda)",
+        "font_size_px": {
+          "line_1_artist": 40,
+          "line_2_years": 24,
+          "line_3_country": 24
+        },
+        "line_spacing": 1.3,
+        "lines": [
+          "Nome artista",
+          "Anni di vita",
+          "Paese"
+        ],
+        "position": "lower_third o centro, mai sul bordo inferiore di testo",
+        "text_shadow": "0 2px 6px rgba(0,0,0,0.45), opzionale",
+        "note": "Serve quando il nome è già un'istituzione: il cartello non aggiunge curiosità, mette in cornice."
+      },
+      {
+        "id": "question_hook",
+        "label": "Sistema C — domanda o affermazione",
+        "usage_share_observed": "serie tematico-filosofiche, ripetizione più alta",
+        "block_top_percent_of_height": 18,
+        "line_1": {
+          "role": "question_or_contradiction",
+          "font": "serif",
+          "font_size_px": 36,
+          "text_color": "#FFFFFF",
+          "may_start_with": [
+            "¿",
+            "\""
+          ]
+        },
+        "line_2": {
+          "role": "explanatory_subline",
+          "font": "sans",
+          "font_size_px": 20,
+          "text_color": "#FFFFFF",
+          "background": "#000000",
+          "padding_px": 6
+        },
+        "artist_name_in_first_seconds": false,
+        "note": "Il nome arriva dopo: la domanda è il gancio. Non usare con lo stack a tre righe nello stesso momento."
+      }
+    ],
+    "title_formulas": [
+      {
+        "id": "speciality",
+        "pattern": "El/La [professione] de [specialità]",
+        "use_for": "artista con mestiere riconoscibile",
+        "requirement": "la specialità deve essere un attributo specifico e verificabile, non un aggettivo generico",
+        "examples": [
+          "El pintor de los monjes y el vino",
+          "El pintor de las llanuras argentinas",
+          "El pintor de la elegancia",
+          "El maestro del vitral"
+        ]
+      },
+      {
+        "id": "el_artista",
+        "pattern": "El Artista: [nome] ([paese])",
+        "use_for": "artista da scoperta, in genere contemporaneo o illustratore",
+        "requirement": "prefisso esplicito alla riga 1 del chip, nome alla riga 2, paese e bandiera alla riga 3",
+        "examples": [
+          "Armando Requena (Perú)",
+          "Todd McFarlane (Canadá)",
+          "Frank Frazetta (EE.UU.)"
+        ]
+      },
+      {
+        "id": "discovery_series",
+        "pattern": "Artistas que tienes que conocer",
+        "use_for": "serie evergreen di scoperta",
+        "requirement": "ripetuta su più reel della stessa serie"
+      },
+      {
+        "id": "thematic_series",
+        "pattern": "[Tema] en el arte",
+        "use_for": "collettivo per tema",
+        "requirement": "il tema deve unire più opere realmente affini",
+        "examples": [
+          "Las brujas en el arte",
+          "Pintores del terror",
+          "Maestros de la viñeta"
+        ]
+      },
+      {
+        "id": "paradox",
+        "pattern": "¿[affermazione impossibile]? / \"[affermazione impossibile]\"",
+        "use_for": "serie tematico-filosofica",
+        "requirement": "il nome dell'artista non compare nei primi secondi"
+      }
+    ],
+    "formula_exclusivity": "una sola formula per reel; non combinare la chip con le formule 3–5 nello stesso momento",
+    "feed": {
+      "columns": 3,
+      "title_inside_thumbnail": true,
+      "cover_is_a_video_frame": true,
+      "cover_backgrounds": "prevalentemente scuri o neutri",
+      "border_frame_or_collage": false
+    }
+  },
+  "shot_grammar": {
+    "types": [
+      {
+        "id": "artwork_detail",
+        "label": "A. Dettaglio d'opera",
+        "content": "crop ravvicinato su luce, mani, tessuto, volto",
+        "duration_seconds": [
+          1.5,
+          3.0
+        ],
+        "frequency": "cavallo di battaglia"
+      },
+      {
+        "id": "artwork_full",
+        "label": "B. Opera intera",
+        "content": "quadro completo nell'inquadratura",
+        "requirement": "almeno una volta per opera, per non mutilare il dipinto"
+      },
+      {
+        "id": "artist_in_studio",
+        "label": "C. Artista in studio",
+        "content": "l'artista al tavolo con la sua opera o il suo processo",
+        "frequency": "ogni 2–3 reel",
+        "rights_note": "foto d'artista con diritti documentati per l'uso sociale"
+      },
+      {
+        "id": "museum_frame",
+        "label": "D. Museo e cornice",
+        "content": "l'opera dentro una cornice reale, con scala",
+        "use_for": "serie «Cuando los artistas pintan la luz»"
+      },
+      {
+        "id": "thematic_group",
+        "label": "E. Serie / collettivo",
+        "content": "più opere sullo stesso tema montate per affinità",
+        "use_for": "copertine tematiche"
+      }
+    ],
+    "movements": {
+      "static": "camera ferma: pausa consapevole, opera intera, respiro",
+      "push_in": "avvicinamento lento verso un dettaglio o un'ancora semantica",
+      "pull_out": "allontanamento che rivela l'opera intera o lo spazio",
+      "pan_left": "scorrimento orizzontale verso sinistra su un motivo",
+      "pan_right": "scorrimento orizzontale verso destra su un motivo",
+      "detail_reveal": "dal dettaglio al senso della scena, con progressione interna",
+      "match_cut": "passaggio per geometria, direzione, colore o motivo ricorrente"
+    },
+    "movement_rules": [
+      "mai tre movimenti consecutivi identici",
+      "camera_reason deve essere una ragione reale, mai 'auto_zoom'",
+      "nessun movimento meccanico ripetuto su ogni shot"
+    ],
+    "framing": {
+      "detail": "crop ravvicinato su un punto semantico",
+      "portrait": "figura o soggetto umano in verticale",
+      "medium": "soggetto a media distanza, metà scena",
+      "full_artwork": "opera intera leggibile",
+      "architecture": "spazio, cornice, museo",
+      "landscape": "mare, cielo, orizzonte, respiro ampio"
+    },
+    "crop_rules": {
+      "horizontal_canvas_in_9_16": "usare una fetta verticale centrata sull'ancora semantica (albero, vela, onda, mani), non un crop cieco al centro",
+      "min_usable_width_px_after_vertical_crop": 500,
+      "never_cut": [
+        "teste",
+        "mani",
+        "firme",
+        "elementi semantici del soggetto"
+      ],
+      "no_face_or_hand_deformation": true,
+      "no_reconstruction_of_historical_works": true
+    },
+    "recurring_motifs": {
+      "principle": "un motivo che ritorna (mano, luce, tessuto, mare) agisce da leitmotiv: i lavori devono stare in dialogo, non essere una sequenza di quadri senza legame",
+      "learned_from": "modules/artvision/REGIA_CINEMA_WOW_V2.md"
+    }
+  },
+  "rhythm": {
+    "rule": "mai una regola 'ogni N secondi': il ritmo nasce dall'opera e dall'audio reale",
+    "target_shots": {
+      "min": 5,
+      "max": 13
+    },
+    "duration_rules": {
+      "min_shot_seconds": 1.2,
+      "breathing_shot_seconds": [
+        2.5,
+        4.5
+      ],
+      "max_static_shot_seconds_in_short": 6.0,
+      "max_end_card_seconds": 2.5
+    },
+    "variation": {
+      "stddev_min": 0.18,
+      "flash_shot_threshold_seconds": 1.1,
+      "flash_share_max": 0.4,
+      "complex_detail_min_seconds": 2.0
+    },
+    "cut_on_beat": {
+      "required": true,
+      "condition": "taglio in battuta su un cambio significativo (mano → mano, luce → luce), non su ogni battuta"
+    },
+    "same_pattern_forbidden": "tre inquadrature consecutive con opera, focale e movimento uguali",
+    "advisory_only": true,
+    "note": "I controlli V326 sono segnalazioni di revisione, non certificazioni di qualità estetica o di retention."
+  },
+  "editing": {
+    "transitions": {
+      "default": "stacchi netti",
+      "dissolves": "poche, solo motivate",
+      "flash_burst": false,
+      "ghosting_or_crossfade_overlay": false
+    },
+    "opening": {
+      "requirement": "gancio VISUALE motivato nei primi secondi",
+      "visual_hook_field": "scenes[0].visual_hook",
+      "text_overlay": "chip o cartello conforme al packaging scelto"
+    },
+    "closing": {
+      "requirement": "chiusura sull'opera, non sul cartello",
+      "text_in_final_seconds": 0
+    }
+  },
+  "music": {
+    "instrumental_only": true,
+    "one_track": true,
+    "structure": "evoluzione reale, non loop di quattro onde",
+    "chosen_before_storyboard": true,
+    "license": "CC BY 4.0 o superiore, con prova della registrazione specifica",
+    "policy": "config/music_policy_v20.json",
+    "release_template": "templates/MUSIC_RELEASE_V20.json",
+    "library": "modules/artvision/music_library.json",
+    "avoid_tracks_used_in_recent_episodes": 3,
+    "do_not_reuse_reference_audio": true,
+    "credits_in_public_caption": true,
+    "music_license_alone_is_not_sufficient": true
+  },
+  "subject_selection": {
+    "pools": [
+      {
+        "id": "canonical_masters",
+        "examples": "Bouguereau, Goya, Monet, Manet, Sargent, Morisot, Courtois, Previati, Church",
+        "formula": "speciality oppure serif_cartello"
+      },
+      {
+        "id": "contemporary_and_illustrators",
+        "examples": "Requena, Vallejo, McFarlane, Frazetta, Bell, Füssli, Herrán",
+        "formula": "el_artista",
+        "extra_shot": "artist_in_studio"
+      },
+      {
+        "id": "themes",
+        "examples": "streghe, terrore, luce, vetro, miniatura",
+        "formula": "thematic_series"
+      }
+    ],
+    "min_candidates_compared": 3,
+    "policy": "docs/ARTVISION_AUDIENCE_RESEARCH_V32.md",
+    "facts_must_be_verified": true,
+    "never_invent_metrics": true,
+    "catalogue": "config/artvision_100_opere_editoriali_20261028.json",
+    "catalogue_note": "La banca è un pool di selezione, non una coda di render né un'autorizzazione a pubblicare."
+  },
+  "rights": {
+    "allowed_reuse_terms": [
+      "Public domain",
+      "CC0",
+      "CC BY 4.0",
+      "CC BY-SA 4.0"
+    ],
+    "artwork_and_file_have_separate_rights": true,
+    "source_registry_required": true,
+    "artist_photo_rights_required": true,
+    "verify_before_publication": true,
+    "cultural_property_restrictions_check": true,
+    "source_list_is_not_legal_clearance": true
+  },
+  "social_posts": {
+    "count": 4,
+    "platforms": [
+      "facebook",
+      "instagram",
+      "tiktok",
+      "youtube"
+    ],
+    "must_be_distinct": true,
+    "standard": "docs/ARTVISION_EDITORIAL_POST_STANDARD_V28.md",
+    "language": "per_channel",
+    "hashtags": {
+      "min": 2,
+      "max": 4
+    },
+    "forbidden_public_words": [
+      "regia",
+      "zoom",
+      "inquadrature",
+      "montaggio",
+      "script",
+      "AI",
+      "cameraman",
+      "algoritmo",
+      "metodologia",
+      "effetti",
+      "render",
+      "velocità",
+      "Standard",
+      "ArtVision",
+      "Tra le Pagine"
+    ],
+    "forbidden_cliches": [
+      "Un'opera che parla senza parole",
+      "Un viaggio dentro",
+      "Lasciati trasportare",
+      "L'arte prende vita",
+      "Cosa ne pensi? Scrivilo nei commenti",
+      "Non è solo un quadro"
+    ]
+  },
+  "social_safety": {
+    "guide": "docs/ARTVISION_LINEE_GUIDA_SOCIAL.md",
+    "no_provocative_crops_on_sensitive_details": true,
+    "no_repeated_zoom_on_sensitive_details": true,
+    "prefer": [
+      "volti",
+      "mani",
+      "pennellate",
+      "simboli",
+      "paesaggio",
+      "composizione generale"
+    ]
+  },
+  "qa": {
+    "advisory_only": true,
+    "checklist": [
+      "vedere e ascoltare l'intero video",
+      "controllare i primi 3 s e gli ultimi 3 s su schermo Android",
+      "verificare la coda nera reale con inspect_black_tail",
+      "controllare che il titolo sia leggibile nella copertina",
+      "verificare che nessun testo resti negli ultimi 3 s",
+      "verificare che i diritti di ogni opera, foto e traccia siano documentati",
+      "verificare i fatti dei testi pubblici"
+    ],
+    "tools": {
+      "rhythm_and_pattern": "src/director_reference_v326.py",
+      "schema_and_sources": "src/artvision_editor_v19.py",
+      "profile_compliance": "src/reel_cromatica_v1_gate.py",
+      "black_tail": "src/director_reference_v326.py → inspect_black_tail",
+      "delivery": "src/artvision_delivery_v55.py"
+    },
+    "inspection_times_s": [
+      0.1,
+      1,
+      3,
+      5,
+      7
+    ],
+    "technical_pass_is_not_artistic_approval": true
+  },
+  "prohibitions": [
+    "Non copiare il video campione, il suo audio, i suoi frame o le sue fotografie.",
+    "Non copiare il timing o il numero di immagini del riferimento.",
+    "Non produrre sottotitoli: mai burn-in, mai ASS/SRT, mai traccia subtitle.",
+    "Non sostituire la musica con la voce o la voce con la musica.",
+    "Non deformare volti, mani o gesti e non generare ricostruzioni di opere storiche.",
+    "Non scrivere in pubblico parole di lavorazione e non usare cliché ricorrenti.",
+    "Niente ghosting, una sola immagine per frame, nessuna sovrapposizione alpha.",
+    "Non spingere dettagli intimi, sangue o nudità pittorica in primo piano.",
+    "Non pubblicare in automatico: senza revisione artistica lo stato resta rendered_needs_review.",
+    "Non usare le parole Standard, ArtVision o Tra le Pagine nelle scritte visibili, nelle copertine o nei titoli pubblici."
+  ],
+  "delivery_v55": {
+    "policy": "config/editorial_rules.json → delivery_v55",
+    "required_files": [
+      "MP4_H264_AAC_real",
+      "JPEG_original_cover",
+      "POST_FACEBOOK.txt",
+      "POST_INSTAGRAM.txt",
+      "POST_TIKTOK.txt",
+      "POST_YOUTUBE.txt",
+      "SOURCES_AND_RIGHTS.md",
+      "reproducible_recipe",
+      "complete_crc_checked_zip",
+      "mp4_only_zip_for_android_fallback"
+    ]
+  },
+  "registration": {
+    "status": "not_registered",
+    "requires": [
+      "approvazione esplicita dell'utente",
+      "voce in config/video_formats_v13.json",
+      "voce in config/editorial_rules.json → formats"
+    ],
+    "until_then": "il profilo resta candidato e i brief si validano con artvision_meraviglia_breve"
+  }
+}
