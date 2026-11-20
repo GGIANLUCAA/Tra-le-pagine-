@@ -114,8 +114,7 @@ def library_cards(items):
         out.append(f"""    <div class="card">
       <h3>{ttl}</h3>
       <div class="sub">{cat} · {meta}</div>
-      <div class="frame"><video controls playsinline preload="metadata" poster="{cover}">
-        <source src="{media}" type="video/mp4"></video></div>
+      <a class="frame" href="{media}" download><img loading="lazy" src="{cover}" alt=""></a>
       <div class="meta"><a class="dl" href="{media}" download>Scarica MP4</a></div>
     </div>""")
     return out
@@ -157,9 +156,9 @@ def main():
   .card{{width:min(92vw,330px)}}
   .card h3{{font-size:15px;margin:0 0 4px;color:var(--gold);letter-spacing:.02em}}
   .card .sub{{font-family:system-ui,sans-serif;font-size:12px;color:#9a9386;margin-bottom:10px}}
-  .frame{{border:1px solid rgba(218,198,168,.5);border-radius:14px;overflow:hidden;
+  .frame{{display:block;border:1px solid rgba(218,198,168,.5);border-radius:14px;overflow:hidden;
          box-shadow:0 30px 80px rgba(0,0,0,.65);background:#000}}
-  video{{display:block;width:100%;height:auto}}
+  video,.frame img{{display:block;width:100%;height:auto}}
   .meta{{margin-top:10px;text-align:center}}
   .dl{{display:inline-block;border:1px solid rgba(218,198,168,.6);border-radius:999px;padding:8px 18px;
        font-family:system-ui,sans-serif;font-size:13px;color:var(--gold);text-decoration:none}}

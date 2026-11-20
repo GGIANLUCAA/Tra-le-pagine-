@@ -42,7 +42,20 @@ Ri-eseguire esattamente `crop_into` di `render_series_v2.py` per ogni beat di de
 ### Vincolo di produzione
 Qualsiasi episodio lanciato con `--config` richiede `GEMINI_API_KEY`: il master si produce **via CI GitHub Actions** (workflow dedicato per episodio), non in locale.
 
+## Reel social — formato breve (obbligatorio · aggiornamento 20 novembre 2026)
+
+Oltre all'episodio critico lungo, la serie produce **reel social verticali** di 30–60 s per la promozione. Regole fisse (riferimento: `src/render_social_reel.py`, primo master: Van Gogh «Starry Skies»):
+
+1. **Un solo artista, molte opere.** Mai un solo quadro: 10–14 opere dello stesso pittore in sequenza. Il reel è un "assaggio" del pittore, non di un singolo dipinto.
+2. **Testo in inglese, minimale.** Solo nome dell'artista (maiuscolo), date di vita e una tagline breve. Nessuna didascalia lunga, nessun titolo d'opera a schermo. Hook d'apertura + eventuale cover.
+3. **Nessuna voce — solo musica.** Il reel è muto a livello narrativo: la musica guida tutto. Traccia autorizzata CC con beat chiaro e riconoscibile.
+4. **Tagli a ritmo di beat.** Rilevare i beat con `scipy.signal.stft` + spectral flux (niente librerie extra) e tagliare ogni 8 beat (~2,5 s a quadro). Nessun ritmo da stampino: la griglia di taglio segue la musica.
+5. **Camera dinamica full-bleed.** Verticale **1080×1920 a 30 FPS**, cover-crop senza cornice/pill/fondo sfocato. Ogni quadro ha un **motion plan diverso** (push in/out, pan orizzontale, tilt verticale, diagonali) scelto in base al formato dell'opera (orizzontale → pan; verticale → tilt).
+6. **Apertura e chiusura pulite.** Fade-in da nero e **dissolvenza finale to-black con audio in fade** (~1,3 s): mai taglio secco sull'ultimo fotogramma.
+7. **Difetti da evitare.** Frame bianchi da overflow `uint8` → clampare i fattori di fade e `np.clip(frame, 0, 255)`. Sfasamento video/audio → fissare una base temporale unica (`t0`) e usarla per frame, fade e audio.
+
 ## Moduli di riferimento
+- Reel social: `src/render_social_reel.py`
 - Baseline copertina: `modules/artvision/identita_visiva_v6.py`
 - Dalí, base approvata: `modules/artvision_critico/render_dali.py`, `dali_sogno_ape.json`; il V1.1 con musica rimane un Artifact GitHub separato.
 - Picasso Guernica, nuovo episodio: `render_guernica.py`, `guernica_picasso_v1.json`, workflow dedicato.
