@@ -44,22 +44,24 @@ Qualsiasi episodio lanciato con `--config` richiede `GEMINI_API_KEY`: il master 
 
 ## Reel social — formato breve (obbligatorio · aggiornamento 20 novembre 2026)
 
-Oltre all'episodio critico lungo, la serie produce **reel social verticali** di 30–60 s per la promozione. Regole fisse (riferimento: `src/render_social_reel_v2.py`, primo master: Van Gogh «Starry Skies», versione cinema/beat-locked):
+Oltre all'episodio critico lungo, la serie produce **reel social verticali** di 30–45 s per la promozione. Regole fisse (riferimento: `src/render_social_reel_v3.py` — "gallery cut", primo master: Van Gogh, 36 s). La **v3** sostituisce la v2: stile "galleria d'arte", fluido, **quadri interi**):
 
 1. **Un solo artista, molte opere.** Mai un solo quadro: 10–14 opere dello stesso pittore in sequenza. Il reel è un "assaggio" del pittore, non di un singolo dipinto.
-2. **Arco emotivo, non elenco.** L'ordine delle opere costruisce un'emozione: stupore → calore → delicatezza → speranza → lavoro → colore notturno → intimità → fatica → l'uomo → tragedia (climax). Il primo fotogramma deve essere il capolavoro più iconico (hook), l'ultimo il quadro più intenso.
-3. **Testo in inglese, minimale ed elegante.** Solo nome dell'artista (serif, spaziato), date di vita e una tagline breve, più una call-to-action finale ("Follow for one masterpiece a day"). Nessuna didascalia lunga, nessun titolo d'opera a schermo. Tipografia **kinetica** (appare/sale in dissolvenza), non statica.
-4. **Nessuna voce — solo musica.** Il reel è muto a livello narrativo: la musica guida tutto.
-5. **Tagli a ritmo di beat.** Rilevare i beat con `scipy.signal.stft` + spectral flux e tagliare su un multiplo di beat (es. ogni 4 beat con brani ~110 BPM ≈ 2,1 s per opera). L'immagine "respira": micro zoom/luminosità che decade dopo ogni beat + un breve lampo d'impatto subito dopo il taglio.
-6. **Camera dinamica full-bleed + grade cinema.** Verticale **1080×1920 a 30 FPS** cover-crop. Applicare una **resa cinematografica**: contrasto a S, saturazione lieve, luci calde / ombre fredde (split-tone), vignettatura e grana fine. Ogni quadro ha un motion plan diverso (push/pan/tilt/diagonali) scelto in base al formato dell'opera.
-7. **Apertura, chiusura e loop.** Fade-in da nero e dissolvenza finale to-black con audio in fade: così il reel **si ripete in modo continuo** (il loop aumenta i replay, che l'algoritmo premia).
-8. **Zona sicura.** Tenere testi e CTA lontani dal bordo inferiore (UI di TikTok/Reels).
-9. **Difetti da evitare.** Frame bianchi da overflow `uint8` → clampare i fattori di fade e `np.clip(frame, 0, 255)`. Sfasamento video/audio → base temporale unica (`t0`). Musica con copertina video incorporata → estrarre con `-map 0:a:0 -vn`.
+2. **Quadri INTERI, mai croppati (regola v3).** Niente full-bleed cover-crop: ogni opera va **adattata intera (contain)** dentro una "placca" da galleria (max ~880×1055 px) su uno sfondo-ambiente scuro (lo stesso quadro sfocato e scurito come parete di museo) con passe-partout chiaro e ombra morbida. Il movimento non deve **mai** tagliare l'opera.
+3. **Arco emotivo, non elenco.** L'ordine delle opere costruisce un'emozione: stupore → calore → delicatezza → speranza → lavoro → colore notturno → intimità → fatica → l'uomo → tragedia (climax). Il primo fotogramma deve essere il capolavoro più iconico (hook), l'ultimo il quadro più intenso.
+4. **Niente "palpiti" / stroboscopia (regola v3).** Vietati i flash di luminosità e i micro-zoom pulsati a ogni beat: l'occhio li legge come sfarfallio ("palpiti"). Il movimento è un **"respiro" lento** (zoom ~3 % e deriva verticale che tornano al punto di partenza) che resta dentro i margini, quindi non croppa. Verifica: la variazione di luminanza per-frame deve restare bassa (media < 1, max ≪ 15 su 30 fps).
+5. **Transizioni fluide a dissolvenza.** Tra un'opera e l'altra usare una **cross-dissolve** morbida (~0,7 s) invece di tagli netti; gli inizi-fine segmento restano comunque allineati al beat (via `scipy.signal.stft` + spectral flux).
+6. **Testo in inglese, minimale ed elegante.** Hook (piccolo sopratitolo dorato + nome artista serif spaziato + date) in apertura; **didascalia discreta** sotto ogni opera (titolo serif + anno in oro); end-card con call-to-action ("Follow for one masterpiece a day"). Niente testi lunghi. Font P052 (Palatino) + Nimbus Sans.
+7. **Grade cinema gentile.** Contrasto a S leggero, saturazione lieve, luci calde / ombre fredde (split-tone), vignettatura discreta (~18 %) e grana fine. Deve restare *elegante*, non aggressivo.
+8. **Apertura, chiusura e loop.** Verticale **1080×1920 a 30 FPS**. Fade-in da nero e dissolvenza finale to-black con audio in fade: così il reel **si ripete in modo continuo** (il loop aumenta i replay, che l'algoritmo premia).
+9. **Zona sicura.** Tenere testi e CTA lontani dal bordo inferiore (UI di TikTok/Reels): didascalie/CTA entro ~y ≤ 1560 su 1920.
+10. **Difetti da evitare.** Frame bianchi da overflow `uint8` → clampare e `np.clip(frame, 0, 255)`. Sfasamento video/audio → base temporale unica (`t0`). Musica con copertina video incorporata → estrarre con `-map 0:a:0 -vn`. **Non riusare il nome file di un master precedente** (cache browser 7 gg): alzare la versione (`…_V3.mp4`).
 
 **Musica per i social.** Sui social (Instagram/TikTok/Facebook) conviene usare le **librerie musicali in-app** (audio con licenza già inclusa nella piattaforma), scelte nella categoria *cinematic / emotional / classical*: brani ~90–115 BPM, pianoforte/archi con un *build* e un *drop*, perfetti per contenuti d'arte. Per il file *scaricabile* (fuori piattaforma) usare musica **CC** (es. Kevin MacLeod / incompetech, CC BY 4.0) e citarla nei crediti.
 
 ## Moduli di riferimento
-- Reel social (v2, cinema/emozione): `src/render_social_reel_v2.py`
+- Reel social (v3, gallery cut — quadri interi, fluido): `src/render_social_reel_v3.py`
+- Reel social (v2, cinema/beat-locked — superato): `src/render_social_reel_v2.py`
 - Reel social (v1): `src/render_social_reel.py`
 - Baseline copertina: `modules/artvision/identita_visiva_v6.py`
 - Dalí, base approvata: `modules/artvision_critico/render_dali.py`, `dali_sogno_ape.json`; il V1.1 con musica rimane un Artifact GitHub separato.
