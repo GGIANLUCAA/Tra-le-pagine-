@@ -124,6 +124,7 @@ def library_cards(items):
 
 
 def main():
+    ROOT.mkdir(parents=True, exist_ok=True)
     vids = sorted((p for p in ROOT.rglob("*.mp4") if p.parent != ROOT),
                   key=lambda p: p.stat().st_mtime, reverse=True)
 
@@ -134,6 +135,17 @@ def main():
     catalog = load_catalog()
     local_total = human(sum(v.stat().st_size for v in vids))
     lib_total = human(sum(i.get("size") or 0 for i in catalog))
+
+    if vids:
+        hero = (f'<a class="all" href="{ZIP.name}" download>'
+                f'Scarica TUTTI i video locali (ZIP · {local_total})</a>')
+        local_block = (f'  <h3 class="sec">I tuoi video — pronti sul server</h3>\n'
+                       f'  <div class="grid">\n{chr(10).join(local_cards(vids))}\n  </div>\n\n')
+        hint = f"{len(vids)} video sul server (subito pronti) + {len(catalog)} in libreria ({lib_total})"
+    else:
+        hero = ""
+        local_block = ""
+        hint = f"Nessun video locale al momento — {len(catalog)} video disponibili in libreria ({lib_total})"
 
     HUB.write_text(f"""<!DOCTYPE html>
 <html lang="it">
@@ -172,16 +184,11 @@ def main():
   <header>
     <h1>Video prodotti</h1>
     <h2>{len(vids) + len(catalog)} video in totale</h2>
-    <a class="all" href="{ZIP.name}" download>Scarica TUTTI i video locali (ZIP · {local_total})</a>
-    <div class="hint">{len(vids)} video sul server (subito pronti) + {len(catalog)} in libreria ({lib_total})</div>
+    {hero}
+    <div class="hint">{hint}</div>
   </header>
 
-  <h3 class="sec">I tuoi video — pronti sul server</h3>
-  <div class="grid">
-{chr(10).join(local_cards(vids))}
-  </div>
-
-  <h3 class="sec">Libreria completa — {len(catalog)} video</h3>
+{local_block}  <h3 class="sec">Libreria completa — {len(catalog)} video</h3>
   <div class="grid">
 {chr(10).join(library_cards(catalog))}
   </div>
