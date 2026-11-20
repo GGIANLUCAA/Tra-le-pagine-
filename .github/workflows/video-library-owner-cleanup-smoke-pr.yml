@@ -1,0 +1,22 @@
+name: Video Library - Owner cleanup live guest smoke
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/video-library-owner-cleanup-smoke-pr.yml'
+      - 'src/video_library_owner_cleanup_smoke.py'
+      - 'reports/video_library_owner_cleanup_result_20261116.json'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-clean-guest-catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install HTTP client
+        run: python3 -m pip -q install requests
+      - name: Check guest catalogue, 17 absent titles, 179 hidden sources, ArtVision Range 206
+        run: python3 src/video_library_owner_cleanup_smoke.py
