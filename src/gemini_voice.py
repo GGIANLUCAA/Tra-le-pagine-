@@ -19,7 +19,16 @@ import soundfile as sf
 SAMPLE_RATE = 24000
 MODEL = "gemini-3.8-flash-tts"
 VOICE = "Gacrux"
-STYLE = "intimate, expressive audiobook storytelling; natural human rhythm, dramatic but never exaggerated, curiosity in questions, brief reflective silences, tender restrained ending"
+STYLE = (
+    "Recita in italiano con una voce maschile calda, matura e profondamente umana, da narratore "
+    "letterario: timbro ricco e vellutato, dizione limpida ma mai scolastica, respiro udibile e "
+    "discreto. Ritmo naturale e vario: leggermente più veloce nei passaggi vividi, più lento e "
+    "sospeso nei momenti di stupore; micro-silenzi solo dopo le virgole forti e alla fine delle frasi. "
+    "Curiosità autentica nelle domande, meraviglia e dolcezza nelle descrizioni, calore intimo e un "
+    "sorriso trattenuto nel finale. Suona come una persona reale che racconta un quadro a un amico, "
+    "a voce bassa, con trasporto ed eleganza. Evita ogni cadenza meccanica, piatta o da sintesi "
+    "vocale; nessuna enfasi teatrale o pubblicitaria, nessun tono robotico."
+)
 
 def _json_write(path, value):
     path = Path(path)
@@ -85,6 +94,26 @@ def _mp3(outdir):
     subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
                     "-i", str(outdir / "VOCE.wav"), "-c:a", "libmp3lame", "-b:a", "160k",
                     str(outdir / "VOCE_NATURALE.mp3")], check=True)
+
+def _master_wav(raw_path, out_path):
+    """Rifinitura audio (solo voce nuova): toglie il rimbombo, dà presenza e calore,
+    comprime con delicatezza e normalizza la loudness. Non altera le parole."""
+    dur = float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries",
+        "format=duration", "-of", "default=noprint_wrappers=1:nokey=1",
+        str(raw_path)]).decode().strip())
+    fade_out = max(0.0, dur - 0.5)
+    chain = (
+        "highpass=f=75,"
+        "equalizer=f=180:t=q:w=1.0:g=-1.5,"
+        "equalizer=f=3200:t=q:w=1.2:g=1.2,"
+        "equalizer=f=9000:t=q:w=1.0:g=0.8,"
+        "acompressor=threshold=0.09:ratio=2.2:attack=12:release=200:makeup=2,"
+        "loudnorm=I=-16:TP=-1.5:LRA=11,"
+        f"afade=t=in:st=0:d=0.12,afade=t=out:st={fade_out:.3f}:d=0.5"
+    )
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                    "-i", str(raw_path), "-af", chain, "-ar", str(SAMPLE_RATE), "-ac", "1",
+                    "-c:a", "pcm_s16le", str(out_path)], check=True)
 
 def sentences(text):
     return [x.strip() for x in re.split(
@@ -263,11 +292,24 @@ def synthesize(text,outdir):
     data=np.asarray(data,dtype=np.float32)
     if not data.size:
         raise ValueError("Audio vuoto")
-    maxpeak=float(np.max(np.abs(data)))
-    if maxpeak>.93:
-        data=data*(.93/maxpeak)
     path=outdir/"VOCE.wav"
-    sf.write(path,data,SAMPLE_RATE)
+    raw=outdir/"VOCE_RAW.wav"
+    sf.write(raw,data,SAMPLE_RATE)
+    # Rifinitura solo sulla voce appena generata; se fallisce, si conserva l'audio grezzo.
+    try:
+        _master_wav(raw,path)
+        data,_=sf.read(path,dtype="float32")
+        if getattr(data,"ndim",1)==2:
+            data=data.mean(axis=1)
+        data=np.asarray(data,dtype=np.float32)
+        raw.unlink(missing_ok=True)
+        print("Voce rifinita: de-rimbombo, presenza, compressione morbida, loudness -16 LUFS.",flush=True)
+    except Exception as exc:
+        print("Rifinitura audio non riuscita, uso voce grezza:",repr(exc)[:160],flush=True)
+        maxpeak=float(np.max(np.abs(data)))
+        if maxpeak>.93:
+            data=data*(.93/maxpeak)
+        sf.write(path,data,SAMPLE_RATE)
     # Save usable audio before conversion/alignment so a retry need not buy it again.
     _save_voice_cache(text, outdir)
     _mp3(outdir)
