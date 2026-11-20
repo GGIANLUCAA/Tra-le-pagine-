@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 220" width="600" height="220">
+  <defs>
+    <style>
+      .bg { fill: #0A0A0A; }
+      .orange { fill: #FF6B00; }
+      .word { fill: #FFFFFF; font-family: 'Montserrat','Poppins',Arial,sans-serif; font-weight: 800; letter-spacing: -1px; }
+      .sub { fill: #FF6B00; font-family: 'Montserrat','Poppins',Arial,sans-serif; font-weight: 600; letter-spacing: 4px; }
+    </style>
+  </defs>
+
+  <!-- ICON: eye + play -->
+  <g transform="translate(110,110)">
+    <!-- outer eye -->
+    <path d="M -90 0 C -60 -52, 60 -52, 90 0 C 60 52, -60 52, -90 0 Z"
+          fill="none" stroke="#FF6B00" stroke-width="16" stroke-linecap="round"/>
+    <!-- pupil -->
+    <circle cx="0" cy="0" r="46" fill="#0A0A0A" stroke="#FF6B00" stroke-width="4"/>
+    <!-- play triangle -->
+    <path d="M -14 -22 L 26 0 L -14 22 Z" fill="#FF6B00"/>
+  </g>
+
+  <!-- WORDMARK -->
+  <text class="word" x="230" y="108" font-size="64">Visione</text>
+  <text class="word" x="230" y="162" font-size="64">Video</text>
+  <text class="sub" x="232" y="192" font-size="14">CONTENT</text>
+</svg>
