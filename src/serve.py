@@ -8,12 +8,14 @@ which makes large video downloads fail through some proxies. This adds:
 
 Usage: serve.py [port] [directory]
 """
-import os, re, sys
+import os, re, sys, gzip, io
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from shutil import copyfileobj
 
 RANGE_RE = re.compile(r"bytes=(\d*)-(\d*)")
+TEXT_EXT = (".html", ".js", ".css", ".json", ".svg", ".txt", ".webmanifest", ".md")
+GZIP_MIN = 1024  # only gzip text files above this size
 
 
 class _LimitedReader:
@@ -41,6 +43,11 @@ class RangeHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         if not any(b"Accept-Ranges" in h for h in self._headers_buffer):
             self.send_header("Accept-Ranges", "bytes")
+        path = self.translate_path(self.path).lower()
+        if path.endswith((".html", "/")):
+            self.send_header("Cache-Control", "no-cache")
+        else:
+            self.send_header("Cache-Control", "public, max-age=604800")
         super().end_headers()
 
     def send_head(self):
@@ -82,6 +89,8 @@ class RangeHandler(SimpleHTTPRequestHandler):
         return _LimitedReader(f, length)
 
     def do_GET(self):
+        if self._try_gzip():
+            return
         f = self.send_head()
         if f:
             try:
@@ -90,6 +99,33 @@ class RangeHandler(SimpleHTTPRequestHandler):
                 pass  # client closed early (normal for video preload)
             finally:
                 f.close()
+
+    def _try_gzip(self):
+        """Serve a gzipped copy of large text files when the client supports it."""
+        if self.headers.get("Range") or "gzip" not in self.headers.get("Accept-Encoding", ""):
+            return False
+        path = self.translate_path(self.path)
+        if os.path.isdir(path):
+            path = os.path.join(path, "index.html")
+        if not (os.path.isfile(path) and path.lower().endswith(TEXT_EXT)):
+            return False
+        try:
+            raw = open(path, "rb").read()
+        except OSError:
+            return False
+        if len(raw) < GZIP_MIN:
+            return False
+        body = gzip.compress(raw, 6)
+        self.send_response(200)
+        self.send_header("Content-Type", self.guess_type(path))
+        self.send_header("Content-Encoding", "gzip")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Vary", "Accept-Encoding")
+        self.send_header("Last-Modified", self.date_time_string(os.stat(path).st_mtime))
+        self.end_headers()
+        if self.command != "HEAD":
+            self.wfile.write(body)
+        return True
 
     def handle_error(self, request, client_address):
         pass  # keep the log clean; disconnects are expected

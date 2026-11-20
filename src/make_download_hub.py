@@ -21,6 +21,7 @@ ZIP = ROOT / "SCARICA_TUTTI_I_VIDEO.zip"
 CATALOG_JSON = ROOT / "_catalog.json"
 
 LIB = "https://video-library-studio.600led.workers.dev"
+PREVIEW_SUFFIX = "_preview.mp4"   # light 540p proxy used by the in-page player
 
 FRIENDLY = {
     "REEL_VANGOGH_V2.mp4": "Social Reel V2 — Van Gogh · Starry Skies (cinema / beat-locked)",
@@ -83,18 +84,38 @@ def pretty_name(it):
     return stem.replace("_", " ").strip().title()
 
 
+def ensure_preview(v):
+    """Build a light 540p proxy (fast to stream) for a local master video."""
+    pv = v.with_name(v.stem + PREVIEW_SUFFIX)
+    if pv.exists() and pv.stat().st_mtime >= v.stat().st_mtime:
+        return pv
+    cmd = ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", str(v),
+           "-vf", "scale=540:-2", "-c:v", "libx264", "-crf", "26",
+           "-maxrate", "2M", "-bufsize", "4M", "-preset", "veryfast",
+           "-profile:v", "high", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
+           "-c:a", "aac", "-b:a", "96k", str(pv)]
+    try:
+        subprocess.run(cmd, check=True)
+        return pv
+    except Exception as e:                                   # noqa: BLE001
+        print(f"  preview failed for {v.name}: {e}")
+        return None
+
+
 def local_cards(vids):
     out = []
     for v in vids:
         rel = v.relative_to(ROOT).as_posix()
+        pv = ensure_preview(v)
+        src = pv.relative_to(ROOT).as_posix() if pv else rel
         poster = v.parent / "COPERTINA.jpg"
         poster_attr = f' poster="{poster.relative_to(ROOT).as_posix()}"' if poster.exists() else ""
         out.append(f"""    <div class="card">
       <h3>{html.escape(title_of(v))}</h3>
-      <div class="sub">{human(v.stat().st_size)} · MP4</div>
+      <div class="sub">{human(v.stat().st_size)} · MP4 · player leggero 540p</div>
       <div class="frame"><video controls playsinline preload="metadata"{poster_attr}>
-        <source src="{rel}" type="video/mp4"></video></div>
-      <div class="meta"><a class="dl" href="{rel}" download>Scarica MP4</a></div>
+        <source src="{src}" type="video/mp4"></video></div>
+      <div class="meta"><a class="dl" href="{rel}" download>Scarica {human(v.stat().st_size)} (1080p)</a></div>
     </div>""")
     return out
 
@@ -125,7 +146,8 @@ def library_cards(items):
 
 def main():
     ROOT.mkdir(parents=True, exist_ok=True)
-    vids = sorted((p for p in ROOT.rglob("*.mp4") if p.parent != ROOT),
+    vids = sorted((p for p in ROOT.rglob("*.mp4")
+                   if p.parent != ROOT and not p.name.endswith(PREVIEW_SUFFIX)),
                   key=lambda p: p.stat().st_mtime, reverse=True)
 
     with zipfile.ZipFile(ZIP, "w", zipfile.ZIP_STORED) as z:
