@@ -150,6 +150,23 @@ DIRECTION = {
             ("detail", 5.0, 0, 0, 1.14, "A quiet human close, with no conventional closing-card or compulsory full canvas"),
         ],
     },
+    "09_WATERHOUSE_ULYSSES_SIRENS": {
+        "concept": "A boat resists a surrounding chorus: discover the figures by following the sirens' flight across the frame, then hold the entire ship for recognition.",
+        "title_mode": "top",
+        "typography_seconds": 3.6,
+        "beats": [
+            ("detail", 3.1, 0, 0, 1.28, "Start with oars and moving human tension, not a full-scene reveal"),
+            ("detail", 6.7, 1, 2, 1.16, "Follow the circling sirens from the left to the central figures"),
+            ("detail", 2.6, 3, 3, 1.34, "An abrupt close, one Siren in a held frame"),
+            ("detail", 5.1, 4, 4, 1.22, "Give Odysseus time to emerge as the subject"),
+            ("detail", 6.3, 5, 0, 1.19, "A long move along the boat, crossing the human crew"),
+            ("reveal", 5.4, None, None, None, "With the orchestra opening, reveal the whole ship and the chorus"),
+            ("whole", 11.6, None, None, None, "Keep the FULL genuine painting on screen; no changing 9:16 frame"),
+            ("approach", 4.5, None, None, None, "Return into the center of the storm without a hard jump"),
+            ("detail", 5.9, 2, 1, 1.14, "Observe the supernatural circle in opposite direction"),
+            ("detail", 4.0, 4, 4, 1.23, "End near Odysseus and crew without formulaic closing whole-art repeat"),
+        ],
+    },
     # New subjects get their own researched plans after source approval.
     # Never silently generate a generic plan for an unfamiliar painting.
 }
