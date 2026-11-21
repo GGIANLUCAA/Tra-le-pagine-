@@ -25,7 +25,7 @@ Questi stati non implicano pubblicazione né playback.
 | Eugène Delacroix | The Barque of Dante | 1822 | — | — | D | — | Non abbinato |
 | Eugène Delacroix | The Death of Sardanapalus | 1827 | D | D | D | D | Possibili 2 |
 | Evelyn De Morgan | The Dryad | 1884–1885 | R | — | D | — | Non abbinato |
-| Evelyn De Morgan | The Storm Spirits | 1900 | — | — | D | D | Non abbinato |
+| Evelyn De Morgan | The Storm Spirits | 1900 | — | — | D | D | Possibili 2 |
 | Evelyn De Morgan; Caspar David Friedrich; Utagawa Hiroshige; Vincent van Gogh | After the Storm | ? | — | — | — | — | Non abbinato |
 | Ford Madox Brown | L'ultimo saluto all'Inghilterra | ? | D | D | D | D | Non abbinato |
 | Francisco Goya | The Witches' Flight | 1798 | — | — | D | D | Non abbinato |
@@ -39,13 +39,13 @@ Questi stati non implicano pubblicazione né playback.
 | Gustave Moreau | Jupiter and Semele | ? | — | — | — | — | Non abbinato |
 | Gustave Moreau | Oedipus and the Sphinx | 1864 | — | — | — | — | Non abbinato |
 | Gustave Moreau | The Apparition | ? | — | — | D | — | Non abbinato |
-| Henry Meynell Rheam | Sleeping Beauty | ? | — | — | D | — | Non abbinato |
+| Henry Meynell Rheam | Sleeping Beauty | ? | — | — | D | — | Possibili 2 |
 | Hieronymus Bosch | The Garden of Earthly Delights | circa 1490–1500 | D | D | D | D | Non abbinato |
 | Hugo Simberg | The Garden of Death | 1896 | D | D | D | D | Possibili 2 |
 | Hugo Simberg | The Wounded Angel | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg | The Wounded Angel — A Quiet Procession | ? | — | — | — | — | Non abbinato |
 | Hugo Simberg; Jan van Eyck; Arnold Böcklin | The Witness — three historic gazes | ? | — | — | — | — | Non abbinato |
-| Ilya Repin | Sadko | 1876 | — | — | D | D | Non abbinato |
+| Ilya Repin | Sadko | 1876 | — | — | D | D | Possibili 2 |
 | Ivan Aivazovsky | The Ninth Wave | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Caspar David Friedrich; Arnold Böcklin | The Sea Between Us | ? | — | — | — | — | Non abbinato |
 | Ivan Aivazovsky; Utagawa Hiroshige; Evelyn De Morgan | The Shape of the Wind | ? | — | — | — | — | Non abbinato |
@@ -61,7 +61,7 @@ Questi stati non implicano pubblicazione né playback.
 | John William Waterhouse | Circe Invidiosa | ? | — | — | — | — | Non abbinato |
 | John William Waterhouse | The Lady of Shalott | 1888 | D | D | D | D | Possibili 3 |
 | John William Waterhouse | The Magic Circle | 1886 | D | D | D | D | Possibili 2 |
-| John William Waterhouse | The Mermaid | ? | — | — | D | — | Non abbinato |
+| John William Waterhouse | The Mermaid | ? | — | — | D | — | Possibili 2 |
 | John William Waterhouse | Ulysses and the Sirens | 1891 | — | — | D | — | Non abbinato |
 | Joos van Craesbeeck | The Temptation of Saint Anthony | ? | — | — | — | — | Non abbinato |
 | Joseph Mallord William Turner | The Burning of the Houses of Lords and Commons, 16 October 1834 | 1835 | B | B | D | C | Non abbinato |
@@ -308,7 +308,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: 1900; Museo: da verificare
 - Code: selezione_30, checkpoint, cicli_v31
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): 06_DE_MORGAN_STORM_SPIRITS_ARTVISION_REEL.mp4, 06_DE_MORGAN_STORM_SPIRITS_META_SENZA_MUSICA.mp4
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_storm_spirits.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
@@ -448,7 +448,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: da verificare; Museo: da verificare
 - Code: selezione_30, checkpoint
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): 07_RHEAM_SLEEPING_BEAUTY_ARTVISION_REEL.mp4, 07_RHEAM_SLEEPING_BEAUTY_META_SENZA_MUSICA.mp4
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_rheam_sleeping_beauty.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
@@ -508,7 +508,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: 1876; Museo: da verificare
 - Code: selezione_30, checkpoint
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): 03_REPIN_SADKO_ARTVISION_REEL.mp4, 03_REPIN_SADKO_META_SENZA_MUSICA.mp4
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261111_sadko.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]
@@ -668,7 +668,7 @@ Questi stati non implicano pubblicazione né playback.
 
 - Anno: da verificare; Museo: da verificare
 - Code: selezione_30, checkpoint
-- Candidati sul sito (nome compatibile soltanto): nessuno
+- Candidati sul sito (nome compatibile soltanto): 05_WATERHOUSE_MERMAID_ARTVISION_REEL.mp4, 05_WATERHOUSE_MERMAID_META_SENZA_MUSICA.mp4
 - critico_standard: non_documentato; prove: nessuna
 - critico_museum: non_documentato; prove: nessuna
 - cinema_standard: render_documentato; prove: queue/artvision_owner_30_render_checkpoint_20261112_waterhouse_mermaid.json [RENDERED_TECH_QA_DOCUMENTED_ARTISTIC_REVIEW_PENDING]

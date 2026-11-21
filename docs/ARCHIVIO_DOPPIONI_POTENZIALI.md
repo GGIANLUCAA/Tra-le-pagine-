@@ -4,6 +4,8 @@ Non vengono rimossi, esclusi, rinominati o bloccati automaticamente.
 
 ## Somiglianze fra nomi di file
 
+- 06 sunset on sea artvision reel mp4: 06_SUNSET_ON_SEA_ARTVISION_REEL.mp4, 06_SUNSET_ON_SEA_ARTVISION_REEL__8525099.mp4
+- 06 sunset on sea meta senza musica mp4: 06_SUNSET_ON_SEA_META_SENZA_MUSICA.mp4, 06_SUNSET_ON_SEA_META_SENZA_MUSICA__7416148.mp4
 - arroseur 1895 cinema restored mp4: ARROSEUR_1895_CINEMA_RESTORED.mp4, ARROSEUR_1895_CINEMA_RESTORED__10221752.mp4, ARROSEUR_1895_CINEMA_RESTORED__11797224.mp4
 - artvision bosch cinema v6 mp4: ARTVISION_BOSCH_CINEMA_V6.mp4, ARTVISION_BOSCH_CINEMA_V6__66250931.mp4
 - artvision botticelli cinema v6 mp4: ARTVISION_BOTTICELLI_CINEMA_V6.mp4, ARTVISION_BOTTICELLI_CINEMA_V6__100834782.mp4

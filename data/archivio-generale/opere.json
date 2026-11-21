@@ -1,15 +1,15 @@
 {
   "schema": "artvision-master-registry-v1",
-  "generated_at": "2026-11-20T23:11:40+00:00",
+  "generated_at": "2026-11-21T06:58:56+00:00",
   "site_state": "live_api",
   "stats": {
     "works": 96,
     "render_documented_slots": 153,
     "not_documented_slots": 131,
-    "site_items": 548,
-    "site_cloudflare": 537,
+    "site_items": 584,
+    "site_cloudflare": 573,
     "site_unavailable": 11,
-    "possible_site_matches": 21,
+    "possible_site_matches": 29,
     "queue_files": 117,
     "literary_dossiers": 19,
     "history_candidates": 12,
@@ -17,17 +17,17 @@
     "selected_future_30": 30,
     "production_dossiers": 195,
     "production_dossier_subdirs": 32,
-    "unmatched_site_items": 417,
-    "site_artist_only_hints": 110,
+    "unmatched_site_items": 441,
+    "site_artist_only_hints": 114,
     "site_ambiguous": 0,
     "recovered_historical_review_files": 8,
     "four_by_one_scoped": 71,
     "complete_four_render_documented": 27,
     "categories": {
+      "Artisti e pittura": 139,
+      "Musica e visual": 83,
       "Critica d’arte": 42,
-      "Musica e visual": 65,
       "Altri progetti": 266,
-      "Artisti e pittura": 121,
       "Libri raccontati": 50,
       "Cronaca e attualità": 4
     }
@@ -1389,7 +1389,10 @@
           "workflow_run": "https://github.com/GGIANLUCAA/Tra-le-pagine-/actions/runs/40106549733"
         }
       ],
-      "site_candidates": [],
+      "site_candidates": [
+        "06_DE_MORGAN_STORM_SPIRITS_ARTVISION_REEL.mp4",
+        "06_DE_MORGAN_STORM_SPIRITS_META_SENZA_MUSICA.mp4"
+      ],
       "excluded": false,
       "selection_order": 21,
       "priority": 2,
@@ -2224,7 +2227,10 @@
         }
       },
       "legacy_video_claims": [],
-      "site_candidates": [],
+      "site_candidates": [
+        "07_RHEAM_SLEEPING_BEAUTY_ARTVISION_REEL.mp4",
+        "07_RHEAM_SLEEPING_BEAUTY_META_SENZA_MUSICA.mp4"
+      ],
       "excluded": false,
       "selection_order": 23,
       "priority": 5,
@@ -2595,7 +2601,10 @@
         }
       },
       "legacy_video_claims": [],
-      "site_candidates": [],
+      "site_candidates": [
+        "03_REPIN_SADKO_ARTVISION_REEL.mp4",
+        "03_REPIN_SADKO_META_SENZA_MUSICA.mp4"
+      ],
       "excluded": false,
       "selection_order": 3,
       "priority": 14,
@@ -3604,7 +3613,10 @@
         }
       },
       "legacy_video_claims": [],
-      "site_candidates": [],
+      "site_candidates": [
+        "05_WATERHOUSE_MERMAID_ARTVISION_REEL.mp4",
+        "05_WATERHOUSE_MERMAID_META_SENZA_MUSICA.mp4"
+      ],
       "excluded": false,
       "selection_order": 20,
       "priority": 8,
