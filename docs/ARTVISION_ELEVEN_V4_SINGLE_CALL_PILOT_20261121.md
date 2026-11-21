@@ -18,7 +18,7 @@ Pieter Bruegel il Vecchio, The Fall of the Rebel Angels (1562). Utilizziamo i pr
 Una singola chiamata Eleven v4 fornisce MP3 e tempi a livello di carattere. I tempi delle scene sono derivati da quelli veri della voce; un errore di allineamento blocca il montaggio ma preserva l'MP3 già comprato. Output previsti: MP3 isolato, MP4 review 720×1280, timeline, copertina, QA, ZIP CRC. Nessuna pubblicazione, Gold, nuova musica o secondo doppiaggio.
 
 ## Configurazione UNA TANTUM sul telefono
-1. Dal tuo account ElevenLabs vai su Developers > API Keys e crea una chiave con accesso TTS e lettura account/voices. Non condividere il valore con la chat.
+1. Dal tuo account ElevenLabs vai su Developers > API Keys e crea una chiave con accesso TTS e lettura account/voices. Se disponibile, imposta un limite della chiave di 1.000 crediti/caratteri per questo provino, come protezione reale lato provider. Non condividere il valore con la chat.
 2. Su GitHub Settings > Secrets and variables > Actions crea un Secret ELEVENLABS_API_KEY con quella chiave.
 3. Apri ElevenLabs Voice Library, ascolta una voce italiana maschile adulta e aggiungila alla tua libreria. Ottieni il suo voice_id dalla pagina della voce o dall'elenco delle voci API. Crea in GitHub Actions Secrets anche ELEVENLABS_VOICE_ID, con soltanto l'identificativo della voce, non la chiave.
 4. Quando il codice sarà collaudato e unito consapevolmente a main, vai in Actions > ArtVision Eleven v4 | one-call Bruegel synchronized pilot > Run workflow.
@@ -26,7 +26,7 @@ Una singola chiamata Eleven v4 fornisce MP3 e tempi a livello di carattere. I te
 6. Scarica l'artifact della run e ascolta il confronto con la voce Google. Non ripetere mode=generate per cambiare soltanto la regia: riutilizza il primo MP3.
 
 ## Consumi
-La prova è di 623 caratteri. Tariffa indicativa ufficiale TTS ~1 credito/carattere: circa 623 crediti stimati, NON un limite di addebito garantito. Il controllo preflight richiede almeno il doppio dei caratteri in saldo. Nessuna voce viene generata senza il comando manuale; nessun acquisto o rinnovo, nessun fallback, nessun retry POST. Lo screenshot precedente mostrava 40.000 crediti Starter, ma il saldo reale va controllato all'avvio. Il consumo effettivo può differire in base a piano/modello e quota.
+La prova è di 623 caratteri. Imposta preferibilmente un limite di chiave a 1.000 caratteri/crediti nella dashboard (funzione ufficiale ElevenLabs) per un tetto effettivo oltre ai controlli software. Tariffa indicativa ufficiale TTS ~1 credito/carattere: circa 623 crediti stimati, NON un limite di addebito garantito. Il controllo preflight richiede almeno il doppio dei caratteri in saldo. Nessuna voce viene generata senza il comando manuale; nessun acquisto o rinnovo, nessun fallback, nessun retry POST. Lo screenshot precedente mostrava 40.000 crediti Starter, ma il saldo reale va controllato all'avvio. Il consumo effettivo può differire in base a piano/modello e quota.
 
 Se l'originale non è disponibile/verificabile (404, 429, hash cambiato), il programma si ferma PRIMA di chiamare ElevenLabs. Se una chiamata dà timeout potrebbe aver già consumato crediti: non rilanciarla; verificare la cronologia ElevenLabs e gli artifact GitHub.
 
