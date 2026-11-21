@@ -56,7 +56,7 @@ def _wav_duration(data: bytes) -> float:
             if wav.getcomptype() != "NONE" or wav.getnframes() < 2400:
                 raise ValueError("WAV non PCM oppure troppo breve")
             expected = wav.getnframes() * 2
-            if len(data) < wav._data_chunk.offset + expected:
+            if len(wav.readframes(wav.getnframes())) != expected:
                 raise ValueError("WAV incompleto")
             return wav.getnframes() / 24000
     except (EOFError, wave.Error, AttributeError) as exc:
@@ -74,8 +74,11 @@ def _fetch(endpoint: str, token: str | None, path: str, body: dict | None = None
         payload = json.dumps(body, ensure_ascii=False).encode("utf-8")
     request = urllib.request.Request(endpoint + path, data=payload, headers=headers,
                                      method="POST" if body is not None else "GET")
+    # Never forward the Bearer token to a redirected host.
+    no_redirects = urllib.request.build_opener(type("NoRedirect", (urllib.request.HTTPRedirectHandler,),
+                                                    {"redirect_request": lambda self, *args, **kwargs: None})())
     try:
-        with urllib.request.urlopen(request, timeout=timeout) as response:
+        with no_redirects.open(request, timeout=timeout) as response:
             result = response.read(MAX_WAV_BYTES + 1)
     except urllib.error.HTTPError as exc:
         raise RuntimeError(f"Server Qwen: HTTP {exc.code}") from None
