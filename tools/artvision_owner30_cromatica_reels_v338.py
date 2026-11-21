@@ -44,6 +44,15 @@ dict(id=23,slug="07_RHEAM_SLEEPING_BEAUTY",title="The Sleeping Beauty",artist="H
  source_author="Google Art Project via Wikimedia Commons",museum="State Russian Museum, Saint Petersburg",
  object_url="https://commons.wikimedia.org/wiki/File:Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
  focus=[(.45,.64),(.75,.67),(.32,.76),(.25,.55),(.59,.24),(.78,.30)])
+,dict(id=7,slug="09_WATERHOUSE_ULYSSES_SIRENS",title="Ulysses and the Sirens",artist="John William Waterhouse",year="1891",it="Ulisse e le sirene",music="Eternal Hope",start=33,
+ mood="La nave di Ulisse tra creature alate e pericoli del mare, un dramma raccontato attraverso sguardi e gesti",
+ source_file="WATERHOUSE - Ulises y las Sirenas (National Gallery of Victoria, Melbourne, 1891. Óleo sobre lienzo, 100.6 x 202 cm).jpg",
+ source_sha1="11c5f0c46db3ea0e5572c95f0b230b5395b7ed15",
+ source_bytes=28945314,source_pixels=(11001,5386),source_license="PD-Art / Public Domain Mark (faithful reproduction); territorial rights review pending",
+ source_author="Wikimedia Commons faithful original National Gallery of Victoria, Melbourne",
+ museum="National Gallery of Victoria, Melbourne",
+ object_url="https://www.ngv.vic.gov.au/explore/collection/work/4457/",
+ focus=[(.48,.78),(.09,.34),(.33,.29),(.58,.30),(.76,.58),(.70,.65)])
 ]
 MUSIC={
 "Eternal Hope":dict(isrc="USUAN1100238",license="CC BY 4.0",source="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100238"),
