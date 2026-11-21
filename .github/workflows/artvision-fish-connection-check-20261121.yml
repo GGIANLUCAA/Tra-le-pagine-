@@ -1,0 +1,56 @@
+name: ArtVision Fish API — safe secret presence check
+on:
+  push:
+    branches:
+      - feature/artvision-voice-autopilot-qwen-20261121
+    paths:
+      - .github/workflows/artvision-fish-connection-check-20261121.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_secret_presence_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FISH_KEY: ${{ secrets.FISH_API_KEY }}
+      NAMED_KEY: ${{ secrets.SpeechtoText }}
+      FISH_VOICE: ${{ secrets.FISH_VOICE_ID }}
+    steps:
+      - name: Report names only — never expose API key, never call paid API
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$FISH_KEY" ]]; then echo "FISH_API_KEY: PRESENT"; else echo "FISH_API_KEY: MISSING"; fi
+          if [[ -n "$NAMED_KEY" ]]; then echo "SpeechtoText: PRESENT"; else echo "SpeechtoText: MISSING"; fi
+          if [[ -n "$FISH_VOICE" ]]; then echo "FISH_VOICE_ID: PRESENT"; else echo "FISH_VOICE_ID: MISSING"; fi
+          echo "This does not validate API token permissions or account; no network API request performed."
+      - name: Validate API authentication through read-only Fish wallet endpoint
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.SpeechtoText }}
+        run: |
+          python - <<'PY'
+          import os, urllib.request, urllib.error
+          key=os.environ.get("API_KEY","")
+          if not key:
+              print("FISH_API_AUTH: NO_SPEECHTOTEXT_SECRET")
+              raise SystemExit(0)
+          req=urllib.request.Request(
+              "https://api.fish.audio/wallet/self/api-credit",
+              headers={"Authorization": "Bearer "+key, "Accept": "application/json"},
+              method="GET"
+          )
+          try:
+              with urllib.request.urlopen(req,timeout=20) as response:
+                  print("FISH_API_AUTH: SUCCESS" if response.status == 200 else "FISH_API_AUTH: UNEXPECTED_HTTP_STATUS")
+          except urllib.error.HTTPError as exc:
+              if exc.code == 401:
+                  print("FISH_API_AUTH: INVALID_OR_REVOKED_KEY")
+              elif exc.code == 403:
+                  print("FISH_API_AUTH: ACCESS_DENIED")
+              else:
+                  print("FISH_API_AUTH: HTTP_"+str(exc.code))
+          except Exception:
+              print("FISH_API_AUTH: NETWORK_OR_ENDPOINT_FAILURE")
+          PY

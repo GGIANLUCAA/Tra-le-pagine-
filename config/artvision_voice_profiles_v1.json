@@ -1,0 +1,18 @@
+{
+  "schema": "artvision-voice-profiles-v1",
+  "goal": "Android browser only. No Google or local PC in new voice queue.",
+  "default_by_format": {
+    "critico_standard": "qwen_hf_candidate",
+    "critico_museum": "qwen_hf_candidate"
+  },
+  "profiles": {
+    "qwen_hf_candidate": {
+      "engine": "hf_zerogpu",
+      "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "approved": false,
+      "review_samples_allowed": true,
+      "language": "Auto",
+      "note": "Cloned-voice draft. Only 350-character review samples before approval. Free-only Hugging Face ZeroGPU, no guaranteed daily throughput."
+    }
+  }
+}
