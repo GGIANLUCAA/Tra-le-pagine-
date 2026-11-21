@@ -1,11 +1,11 @@
 {
   "schema": "artvision_owner_selected_30_cromatica_20261121_v1",
   "owner_selected_list": "docs/ARCHIVIO_RICERCA_FUTURA.md#le-30-opere-selezionate",
-  "rule": "docs/REGOLE_ATTIVE.md V337",
+  "rule": "docs/REGOLE_ATTIVE.md V338",
   "format": "reel_cromatica_independent_new_variant_not_4x1",
   "production_run_id": 44834212644,
   "source_verification": "exact prior-owner30 SHA1/pixels/bytes where available, copyrighted photo credit recorded",
-  "technical_qa": "all seven 720x1280 MP4 and silent variants full ffmpeg decode pass, 7 outer ZIP CRC pass, at least 11 sec full painting view",
+  "technical_qa": "7 original V337 MP4s plus 2 new V338 MP4s: ffprobe + all-stream decoding in GitHub, verified package ZIP CRC and local SHA256 readback",
   "publication_status": "PRIVATE_ARTISTIC_APPROVAL_AND_TERRITORIAL_RIGHTS_PENDING",
   "external_cost": 0,
   "selected": [
@@ -54,8 +54,16 @@
       "autore": "Karl Bryullov",
       "opera": "The Last Day of Pompeii",
       "cromatica": {
-        "status": "PENDING_NEW_CROMATICA",
-        "next_action": "Verify exact painting photograph, source rights and build separate new cromatica reel"
+        "status": "RENDERED_QA_PASS_NEEDS_ARTISTIC_REVIEW",
+        "slug": "08_BRYULLOV_POMPEII",
+        "run_id": 44879847028,
+        "mp4_sha256": "873fec594cb234aef77b7e0ce91e4ff15fd47547fa95b531b207bc42b50c7829",
+        "duration_seconds": 61.7,
+        "full_art_seconds": 15.2,
+        "scenes": 12,
+        "format": "reel_cromatica_v338_new_directing",
+        "social_published": false,
+        "rights_final": "PENDING"
       }
     },
     {
@@ -63,8 +71,8 @@
       "autore": "William Holbrook Beard",
       "opera": "The Bulls and Bears",
       "cromatica": {
-        "status": "PENDING_NEW_CROMATICA",
-        "next_action": "Verify exact painting photograph, source rights and build separate new cromatica reel"
+        "status": "BLOCKED_SOURCE_RIGHTS",
+        "next_action": "Only render after certified museum or truly public-domain high-resolution image is downloaded and its reuse terms validated; 750×470 Commons original too small; Bridgeman rights restricted."
       }
     },
     {
@@ -72,8 +80,16 @@
       "autore": "John William Waterhouse",
       "opera": "Ulysses and the Sirens",
       "cromatica": {
-        "status": "PENDING_NEW_CROMATICA",
-        "next_action": "Verify exact painting photograph, source rights and build separate new cromatica reel"
+        "status": "RENDERED_QA_PASS_NEEDS_ARTISTIC_REVIEW",
+        "slug": "09_WATERHOUSE_ULYSSES_SIRENS",
+        "run_id": 44879948244,
+        "mp4_sha256": "95d558115211137323e87aa85afb5b1d46365e668522a5e3860fb8e878c80307",
+        "duration_seconds": 55.2,
+        "full_art_seconds": 11.6,
+        "scenes": 10,
+        "format": "reel_cromatica_v338_new_directing",
+        "social_published": false,
+        "rights_final": "PENDING"
       }
     },
     {
@@ -287,12 +303,22 @@
       }
     }
   ],
-  "completed_count": 7,
-  "pending_count": 23,
-  "next_owner_order": 5,
+  "completed_count": 9,
+  "pending_count": 21,
+  "next_owner_order": 8,
   "notices": [
     "Existing Cinema/Museum/Critico 4x1 versions are not replaced or counted as new; this is a new reel family.",
     "Never change approved original soundtrack/voice or invent AI painting; use real music and the entire authentic artwork.",
     "Do not auto-publish without artwork photo rights and owner artistic approval."
-  ]
+  ],
+  "blocked_count": 1,
+  "last_v338_two_new_run_ids": [
+    44879847028,
+    44879948244
+  ],
+  "last_v338_verified_sha256s": [
+    "873fec594cb234aef77b7e0ce91e4ff15fd47547fa95b531b207bc42b50c7829",
+    "95d558115211137323e87aa85afb5b1d46365e668522a5e3860fb8e878c80307"
+  ],
+  "delivery": "Two new private V338 videos delivered as verified MP4 and Android ZIP; originals kept untouched"
 }

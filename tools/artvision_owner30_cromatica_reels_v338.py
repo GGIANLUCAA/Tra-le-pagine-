@@ -35,6 +35,24 @@ dict(id=21,slug="06_DE_MORGAN_STORM_SPIRITS",title="The Storm Spirits",artist="E
 dict(id=23,slug="07_RHEAM_SLEEPING_BEAUTY",title="The Sleeping Beauty",artist="Henry Meynell Rheam",year="1899",it="La bella addormentata",music="Calmant",start=13,mood="Una donna addormentata in una composizione fantastica di dettagli vegetali",
  source_file="Henry_meynell_rheam_the_sleeping_beauty2024_CKS_22681_0006_000(120158).jpg",source_sha1="7f6274429419bbc98b719d9b5020482442f5906b",source_bytes=0,source_pixels=(3200,1987),source_license="PD-Art / PDM (territorial permissions to verify)",source_author="Christie's via Wikimedia Commons",museum="Christie's auction archival catalog 2024",object_url="https://www.christies.com/lot/lot-6486205",
  focus=[(.48,.54),(.21,.37),(.78,.38),(.28,.76),(.70,.78),(.54,.25)])
+,dict(id=5,slug="08_BRYULLOV_POMPEII",title="The Last Day of Pompeii",artist="Karl Bryullov",year="1833",it="L'ultimo giorno di Pompei",music="Dreams Become Real",start=8,
+ mood="Un cielo in fiamme, rovine e persone in fuga: un evento visto attraverso i gesti umani",
+ source_file="Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
+ source_sha1="1faef1dc25b305f065f912c5102a44dd1e97e6cc",source_bytes=0,source_pixels=(30000,21059),
+ faithful_thumb_width=3840,thumb_sha256="85ad52a049af1f2b71c6cc98db6a8f97ccf637f16731445322732d2597dd3b84",
+ thumb_expected_pixels=(3840,2696),source_license="PD-Art / Public Domain Mark (digital reproduction); territorial commercial permissions pending",
+ source_author="Google Art Project via Wikimedia Commons",museum="State Russian Museum, Saint Petersburg",
+ object_url="https://commons.wikimedia.org/wiki/File:Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project.jpg",
+ focus=[(.45,.64),(.75,.67),(.32,.76),(.25,.55),(.59,.24),(.78,.30)])
+,dict(id=7,slug="09_WATERHOUSE_ULYSSES_SIRENS",title="Ulysses and the Sirens",artist="John William Waterhouse",year="1891",it="Ulisse e le sirene",music="Eternal Hope",start=33,
+ mood="La nave di Ulisse tra creature alate e pericoli del mare, un dramma raccontato attraverso sguardi e gesti",
+ source_file="WATERHOUSE - Ulises y las Sirenas (National Gallery of Victoria, Melbourne, 1891. Óleo sobre lienzo, 100.6 x 202 cm).jpg",
+ source_sha1="11c5f0c46db3ea0e5572c95f0b230b5395b7ed15",
+ source_bytes=28945314,source_pixels=(11001,5386),source_license="PD-Art / Public Domain Mark (faithful reproduction); territorial rights review pending",
+ source_author="Wikimedia Commons faithful original National Gallery of Victoria, Melbourne",
+ museum="National Gallery of Victoria, Melbourne",
+ object_url="https://www.ngv.vic.gov.au/explore/collection/work/4457/",
+ focus=[(.48,.78),(.09,.34),(.33,.29),(.58,.30),(.76,.58),(.70,.65)])
 ]
 MUSIC={
 "Eternal Hope":dict(isrc="USUAN1100238",license="CC BY 4.0",source="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100238"),
@@ -73,23 +91,48 @@ filename=urllib.parse.quote(key,safe="._-")
 file_url=f"https://upload.wikimedia.org/wikipedia/commons/{digest[0]}/{digest[:2]}/{filename}"
 fallback="https://commons.wikimedia.org/wiki/Special:Redirect/file/"+filename
 art_fetch=None
-for candidate in (file_url,fallback):
-    try:
-        art_fetch=fetch(candidate,ASSETS/"original_work.jpg",100_000)
-        break
-    except Exception as exc:
-        print("MUSEUM_SOURCE_ATTEMPT_FAILED",str(exc)[:260],flush=True)
-if not art_fetch:raise RuntimeError("No authentic exact painting source; do not generate an AI replacement")
-original_bytes=(ASSETS/"original_work.jpg").read_bytes()
-actual_sha1=hashlib.sha1(original_bytes).hexdigest()
-assert actual_sha1==C["source_sha1"],f"Wrong photograph SHA1! {actual_sha1}"
-if C["source_bytes"]:
-    assert len(original_bytes)==C["source_bytes"],f"Wrong file byte count {len(original_bytes)}"
-with Image.open(ASSETS/"original_work.jpg") as im:
-    assert tuple(im.size)==tuple(C["source_pixels"]),f"Wrong image dimensions {im.size}"
-    original=im.convert("RGB")
+if C.get("faithful_thumb_width"):
+    # This monumental 30,000px canvas was already verified in the owner's Cinema checkpoint.
+    # Fetch Wikimedia's *faithful* downsample, NOT the 217MB original.
+    width=C["faithful_thumb_width"]
+    art_url=f"https://upload.wikimedia.org/wikipedia/commons/thumb/{digest[0]}/{digest[:2]}/{filename}/{width}px-{filename}"
+    art_fetch=fetch(art_url,ASSETS/"original_work.jpg",500_000)
+    img_bytes=(ASSETS/"original_work.jpg").read_bytes()
+    # Historical source checkpoint's 3840px SHA was for a separate JPEG derivative;
+    # Wikimedia server may use a different encoder/quality at identical dimensions.
+    # Never compare different derivatives as if bit-identical. Lock this fetched
+    # source's actual hash, validate exact canonical artwork filename and dimensions.
+    thumb_hash=hashlib.sha256(img_bytes).hexdigest()
+    art_fetch["actual_thumb_sha256"]=thumb_hash
+    art_fetch["checkpoint_other_derivative_sha256"]=C["thumb_sha256"]
+    assert img_bytes[:2] == bytes((255,216)), "Not a JPEG artwork file"
+    assert filename.startswith("Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project"),"Wrong work"
+    print("POMPEII_NEW_AUTHENTIC_THUMB_SHA256",thumb_hash,"historic_derivative",C["thumb_sha256"],flush=True)
+    with Image.open(ASSETS/"original_work.jpg") as im:
+        assert im.size==C["thumb_expected_pixels"],"Pompeii canonical 3840px thumbnail dimensions mismatch"
+        original=im.convert("RGB")
+    actual_sha1=hashlib.sha1(img_bytes).hexdigest()
+    art_fetch["source_high_resolution_original_sha1"]=C["source_sha1"]
+    art_fetch["faithful_downsample"]=True
+    print("POMPEII_CANONICAL_ORIGINAL_DOWNSAMPLE_VERIFIED",original.size,art_fetch["sha256"],flush=True)
+else:
+    for candidate in (file_url,fallback):
+        try:
+            art_fetch=fetch(candidate,ASSETS/"original_work.jpg",100_000)
+            break
+        except Exception as exc:
+            print("MUSEUM_SOURCE_ATTEMPT_FAILED",str(exc)[:260],flush=True)
+    if not art_fetch:raise RuntimeError("No authentic exact painting source; do not generate an AI replacement")
+    original_bytes=(ASSETS/"original_work.jpg").read_bytes()
+    actual_sha1=hashlib.sha1(original_bytes).hexdigest()
+    assert actual_sha1==C["source_sha1"],f"Wrong photograph SHA1! {actual_sha1}"
+    if C["source_bytes"]:
+        assert len(original_bytes)==C["source_bytes"],f"Wrong file byte count {len(original_bytes)}"
+    with Image.open(ASSETS/"original_work.jpg") as im:
+        assert tuple(im.size)==tuple(C["source_pixels"]),f"Wrong image dimensions {im.size}"
+        original=im.convert("RGB")
 SOURCE=original.crop(C["crop"]) if "crop" in C else original
-print("EXACT_PAINTING_SOURCE_VERIFIED",C["title"],C["source_sha1"],original.size,flush=True)
+print("EXACT_PAINTING_SOURCE_VERIFIED",C["title"],actual_sha1,original.size,flush=True)
 if max(SOURCE.size)>4700:
     SOURCE.thumbnail((4700,4700),Image.Resampling.LANCZOS)
 assert SOURCE.width>=1200 and SOURCE.height>=950,(SOURCE.width,SOURCE.height)
