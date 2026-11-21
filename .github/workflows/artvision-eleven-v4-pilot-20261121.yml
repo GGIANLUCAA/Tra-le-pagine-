@@ -1,0 +1,163 @@
+name: "ArtVision Eleven v4 | one-call Bruegel synchronized pilot"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_eleven_v4_pilot_v1.py"
+      - "tests/test_artvision_eleven_v4_pilot_v1.py"
+      - ".github/workflows/artvision-eleven-v4-pilot-20261121.yml"
+  push:
+    branches:
+      - feature/artvision-elevenlabs-v4-voice-pilot-20261121
+    paths:
+      - "src/artvision_eleven_v4_pilot_v1.py"
+      - "tests/test_artvision_eleven_v4_pilot_v1.py"
+      - ".github/workflows/artvision-eleven-v4-pilot-20261121.yml"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "preflight = 0 credits, account = read-only, generate = one voice POST"
+        type: choice
+        options: [preflight, account, generate]
+        default: preflight
+      spend_confirmation:
+        description: "For generate only type EXACTLY: ONE_PREVIEW_ONLY"
+        type: string
+        required: false
+        default: ""
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: artvision-eleven-v4-bruegel-one-preview
+  cancel-in-progress: false
+jobs:
+  offline_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test no-credit voice bounds and timing math
+        run: python -m unittest discover -s tests -p 'test_artvision_eleven_v4_pilot_v1.py' -v
+
+  source_preflight:
+    if: github.event_name != 'workflow_dispatch'
+    needs: offline_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install only open-source local image verification packages
+        run: python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Recover SHA-verified original artwork and licensed audio from existing GitHub artifact V131
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359/zip" > "$RUNNER_TEMP/artvision_original_v131.zip"
+          SRC_ZIP="$RUNNER_TEMP/artvision_original_v131.zip" python - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          source = pathlib.Path(os.environ["SRC_ZIP"])
+          dest = pathlib.Path("output/eleven_v4_bruegel_preview")
+          dest.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(source) as z:
+              for filename, target, expected in [
+                  ("ORIGINAL_ARTWORK.jpg", "ORIGINAL_ARTWORK.jpg", "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"),
+                  ("ORIGINAL_LICENSED_MUSIC.mp3", "ORIGINAL_LICENSED_MUSIC.mp3", "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573")
+              ]:
+                  data = z.read(filename)
+                  assert hashlib.sha256(data).hexdigest() == expected, "Source artifact SHA mismatch"
+                  (dest / target).write_bytes(data)
+          print("SOURCE_AND_LICENSED_MUSIC_REUSED_FROM_EXISTING_ARTIFACT_SHA_PASS")
+          PY
+      - name: Recover original painting and SHA verify before spending anything
+        continue-on-error: true
+        run: python src/artvision_eleven_v4_pilot_v1.py --stage preflight
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ARTVISION_ELEVEN_PREFLIGHT_ZERO_CREDITS
+          path: |
+            output/eleven_v4_bruegel_preview/PREFLIGHT.json
+            output/eleven_v4_bruegel_preview/COPIONE_ESATTO.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+  manual_audio_and_video:
+    if: github.event_name == 'workflow_dispatch'
+    needs: offline_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    env:
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+      ARTVISION_ELEVEN_ALLOW_ONE_CALL: ${{ inputs.spend_confirmation }}
+      RUN_MODE: ${{ inputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install image and numeric runtime, FFmpeg from ubuntu runner
+        run: |
+          python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3'
+          command -v ffmpeg
+          command -v ffprobe
+      - name: Recover SHA-verified original artwork and licensed audio from existing GitHub artifact V131
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359/zip" > "$RUNNER_TEMP/artvision_original_v131.zip"
+          SRC_ZIP="$RUNNER_TEMP/artvision_original_v131.zip" python - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          source = pathlib.Path(os.environ["SRC_ZIP"])
+          dest = pathlib.Path("output/eleven_v4_bruegel_preview")
+          dest.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(source) as z:
+              for filename, target, expected in [
+                  ("ORIGINAL_ARTWORK.jpg", "ORIGINAL_ARTWORK.jpg", "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"),
+                  ("ORIGINAL_LICENSED_MUSIC.mp3", "ORIGINAL_LICENSED_MUSIC.mp3", "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573")
+              ]:
+                  data = z.read(filename)
+                  assert hashlib.sha256(data).hexdigest() == expected, "Source artifact SHA mismatch"
+                  (dest / target).write_bytes(data)
+          print("SOURCE_AND_LICENSED_MUSIC_REUSED_FROM_EXISTING_ARTIFACT_SHA_PASS")
+          PY
+      - name: Never allow generation without the deliberate single-preview confirmation
+        run: |
+          if [ "$RUN_MODE" = "generate" ] && [ "$ARTVISION_ELEVEN_ALLOW_ONE_CALL" != "ONE_PREVIEW_ONLY" ]; then
+            echo "::error::ONE_PREVIEW_ONLY confirmation is required for a billable Eleven generation"
+            exit 2
+          fi
+      - name: Preflight artwork, read-only account or one voice call, then render
+        run: |
+          set -euo pipefail
+          python src/artvision_eleven_v4_pilot_v1.py --stage "$RUN_MODE"
+      - name: Save exact audio, synced MP4, QA and source metadata even if render fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ART_ELEVEN_V4_BRUEGEL_ONE_REVIEW_${{ github.run_id }}
+          path: |
+            output/eleven_v4_bruegel_preview/VOCE_ELEVEN_V4.mp3
+            output/eleven_v4_bruegel_preview/ELEVEN_TIMESTAMPS.json
+            output/eleven_v4_bruegel_preview/BRUEGEL_ELEVEN_V4_CRITICO_REVIEW.mp4
+            output/eleven_v4_bruegel_preview/ARTVISION_BRUEGEL_ELEVEN_V4_REVIEW.zip
+            output/eleven_v4_bruegel_preview/COPIONE_ESATTO.txt
+            output/eleven_v4_bruegel_preview/PREFLIGHT.json
+            output/eleven_v4_bruegel_preview/ELEVEN_ACCOUNT_PREFLIGHT.json
+            output/eleven_v4_bruegel_preview/TIMELINE.json
+            output/eleven_v4_bruegel_preview/QA_ELEVEN_V4.json
+            output/eleven_v4_bruegel_preview/COVER.jpg
+            output/eleven_v4_bruegel_preview/CONTACT_SHEET.jpg
+            output/eleven_v4_bruegel_preview/SOURCES_AND_RIGHTS.txt
+          if-no-files-found: warn
+          retention-days: 30
