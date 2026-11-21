@@ -272,7 +272,9 @@ def render(out, art, q, chapters, timing, audio, duration):
     drawer = ImageDraw.Draw(cover)
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf"
     title_font = ImageFont.truetype(font_path, 35) if Path(font_path).exists() else ImageFont.load_default()
-    drawer.text((28, 45), "THE FALL OF THE REBEL ANGELS", font=title_font, fill=(237, 231, 220),
+    drawer.text((52, 45), "THE FALL OF THE", font=title_font, fill=(237, 231, 220),
+                stroke_width=1, stroke_fill=(12, 12, 12))
+    drawer.text((82, 98), "REBEL ANGELS", font=title_font, fill=(237, 231, 220),
                 stroke_width=1, stroke_fill=(12, 12, 12))
     cover.save(out / "COVER.jpg", quality=94)
     total = INTRO + duration + OUTRO
@@ -323,12 +325,22 @@ def render(out, art, q, chapters, timing, audio, duration):
         raise
     review = out / "BRUEGEL_ELEVEN_V4_CRITICO_REVIEW.mp4"
     # Real spoken audio starts after a short visual introduction; no AI-generated music.
+    licensed_music = out / "ORIGINAL_LICENSED_MUSIC.mp3"
+    if licensed_music.is_file() and sha(licensed_music) == "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573":
+        filter_graph = (f"[1:a]adelay={round(INTRO*1000)}|{round(INTRO*1000)},volume=1.0[v];"
+                        f"[2:a]atrim=0:{total},asetpts=PTS-STARTPTS,volume=0.13,"
+                        f"afade=t=in:st=0:d=1.5,afade=t=out:st={max(0,total-3)}:d=3[m];"
+                        f"[v][m]amix=inputs=2:duration=longest:dropout_transition=0,"
+                        f"alimiter=limit=.95[a]")
+        inputs = ["-i", str(silent), "-i", str(audio), "-i", str(licensed_music)]
+    else:
+        filter_graph = f"[1:a]adelay={round(INTRO*1000)}|{round(INTRO*1000)}[a]"
+        inputs = ["-i", str(silent), "-i", str(audio)]
     subprocess.run([
         "ffmpeg", "-y", "-hide_banner", "-loglevel", "error",
-        "-i", str(silent), "-i", str(audio),
-        "-filter_complex", f"[1:a]adelay={round(INTRO*1000)}|{round(INTRO*1000)}[narration]",
-        "-map", "0:v", "-map", "[narration]",
-        "-c:v", "copy", "-c:a", "aac", "-b:a", "160k",
+        *inputs, "-filter_complex", filter_graph,
+        "-map", "0:v", "-map", "[a]",
+        "-c:v", "copy", "-c:a", "aac", "-b:a", "160k", "-t", str(total),
         "-movflags", "+faststart", str(review)
     ], check=True)
     # Decode both streams, not just check file existence.
@@ -350,7 +362,9 @@ def package(out, q, plan_data, voice_path, review, timing):
         + "Source SHA256: " + q["source_art_sha256"] + "\n"
         + "Voice: owner-selected ElevenLabs eleven_v4 pilot; requires rights review.\n"
         + "No gallery/social publication. No museum or historical frame simulated.\n"
-        + "No music in this VOICE-only comparison pilot.\n", encoding="utf8")
+        + "Music (if SHA-verified): Evening of Chaos, Kevin MacLeod, CC BY 4.0, "
+          "ISRC USUAN1300041, https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1300041 ; "
+          "https://creativecommons.org/licenses/by/4.0/ .\n", encoding="utf8")
     qa = {
         "state": "TECHNICAL_REVIEW_READY_ARTISTIC_REVIEW_PENDING",
         "voice": "ElevenLabs eleven_v4",
