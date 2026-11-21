@@ -1,0 +1,27 @@
+name: ArtVision Fish API — safe secret presence check
+on:
+  push:
+    branches:
+      - feature/artvision-voice-autopilot-qwen-20261121
+    paths:
+      - .github/workflows/artvision-fish-connection-check-20261121.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify_secret_presence_only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      FISH_KEY: ${{ secrets.FISH_API_KEY }}
+      NAMED_KEY: ${{ secrets.SpeechtoText }}
+      FISH_VOICE: ${{ secrets.FISH_VOICE_ID }}
+    steps:
+      - name: Report names only — never expose API key, never call paid API
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "$FISH_KEY" ]]; then echo "FISH_API_KEY: PRESENT"; else echo "FISH_API_KEY: MISSING"; fi
+          if [[ -n "$NAMED_KEY" ]]; then echo "SpeechtoText: PRESENT"; else echo "SpeechtoText: MISSING"; fi
+          if [[ -n "$FISH_VOICE" ]]; then echo "FISH_VOICE_ID: PRESENT"; else echo "FISH_VOICE_ID: MISSING"; fi
+          echo "This does not validate API token permissions or account; no network API request performed."
