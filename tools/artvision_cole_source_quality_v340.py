@@ -209,9 +209,13 @@ if previews:
         reduced=Image.fromarray(im).resize((270,480),Image.Resampling.LANCZOS)
         contact.paste(reduced,((i%4)*270,(i//4)*480))
     contact.save(ROOT/"QA_CONTACT_SHEET.jpg",quality=92)
-if previews:
-    first=Image.fromarray(cv2.cvtColor(next(iter(previews.values())),cv2.COLOR_BGR2RGB))
-    first.save(cover,quality=92)
+# Native-resolution cover is extracted from the verified MP4, not a 540x960 QA thumbnail.
+with (ROOT/"cover_extraction.log").open("wb") as log:
+    p=subprocess.run(["ffmpeg","-nostdin","-hide_banner","-loglevel","error","-y",
+        "-ss","1.5","-i",str(video),"-frames:v","1","-q:v","2",str(cover)],stderr=log)
+assert p.returncode==0 and cover.exists(),"Cover frame extraction failed"
+with Image.open(cover) as c:
+    assert c.size==(W,H),"Native-resolution cover missing"
 credits=f"""THOMAS COLE — The Course of Empire: Destruction (1836).
 Original authentic image {ART}
 Origin pixels: {ART_DIM[0]}x{ART_DIM[1]}, original source SHA256 {ART_SHA256}.
