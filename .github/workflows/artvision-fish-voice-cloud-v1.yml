@@ -1,0 +1,81 @@
+name: ArtVision Fish Audio Free Voice (Android cloud, no PC)
+on:
+  pull_request:
+    paths:
+      - "src/artvision_voice_fish_free_v1.py"
+      - "tests/test_artvision_voice_fish_free_v1.py"
+      - ".github/workflows/artvision-fish-voice-cloud-v1.yml"
+  push:
+    branches: [main]
+    paths:
+      - "voice_jobs/fish_requests/**"
+  workflow_dispatch:
+    inputs:
+      job_file:
+        description: "Existing Fish voice job JSON path, e.g. voice_jobs/fish_requests/painting_001.json"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: artvision-fish-free-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify only the free TTS model can be requested
+        run: python -m unittest discover -s tests -p 'test_artvision_voice_fish_free_v1.py' -v
+  synthesize_fish:
+    if: github.event_name != 'pull_request'
+    needs: offline_tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    env:
+      FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+      FISH_VOICE_ID: ${{ secrets.FISH_VOICE_ID }}
+      ARTVISION_FISH_VOICE_APPROVED: ${{ vars.ARTVISION_FISH_VOICE_APPROVED }}
+      EVENT_NAME: ${{ github.event_name }}
+      BEFORE_SHA: ${{ github.event.before }}
+      MANUAL_JOB: ${{ inputs.job_file }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Resolve newly committed Fish jobs
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == 'workflow_dispatch' ]]; then
+            printf '%s\n' "$MANUAL_JOB" > /tmp/artvision_fish_jobs.txt
+          elif git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+            git diff --name-only "$BEFORE_SHA" HEAD -- voice_jobs/fish_requests/ | grep -E '^voice_jobs/fish_requests/[^/]+\.json$' > /tmp/artvision_fish_jobs.txt || true
+          else
+            git ls-files 'voice_jobs/fish_requests/*.json' > /tmp/artvision_fish_jobs.txt
+          fi
+          test -s /tmp/artvision_fish_jobs.txt || { echo "::warning::No Fish voice requests"; exit 2; }
+      - name: Synthesize only with explicitly FREE model (never paid)
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            if [[ "$file" != voice_jobs/fish_requests/*.json ]] || [[ ! -f "$file" ]]; then
+              echo "::error::Invalid Fish job path"
+              exit 2
+            fi
+            python src/artvision_voice_fish_free_v1.py --job "$file" --out-root output/voice_fish
+          done < /tmp/artvision_fish_jobs.txt
+      - name: Archive review MP3 and manifest; no paid models, no publish
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_FISH_FREE_REVIEW_${{ github.run_id }}
+          path: output/voice_fish/
+          if-no-files-found: warn
+          retention-days: 14
