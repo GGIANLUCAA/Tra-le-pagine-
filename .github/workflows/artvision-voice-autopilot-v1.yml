@@ -1,0 +1,78 @@
+name: ArtVision Voice Autopilot V1 (local Qwen, approved voices only)
+on:
+  pull_request:
+    paths:
+      - "src/artvision_voice_autopilot_v1.py"
+      - "tests/test_artvision_voice_autopilot_v1.py"
+      - "config/artvision_voice_profiles_v1.json"
+      - ".github/workflows/artvision-voice-autopilot-v1.yml"
+  push:
+    branches: [main]
+    paths:
+      - "voice_jobs/requests/**"
+  workflow_dispatch:
+    inputs:
+      job_file:
+        description: "Existing path e.g. voice_jobs/requests/critico_001.json"
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: "artvision-voice-${{ github.ref }}"
+  cancel-in-progress: false
+jobs:
+  safe_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Offline safety checks, no model or API use
+        run: python -m unittest discover -s tests -p "test_artvision_voice_autopilot_v1.py" -v
+  local_narration:
+    if: github.event_name != 'pull_request'
+    needs: safe_tests
+    runs-on: [self-hosted, artvision-voice]
+    timeout-minutes: 180
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Select new jobs from push or manual dispatch
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          MANUAL_JOB: ${{ inputs.job_file }}
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            printf '%s\n' "$MANUAL_JOB" > artvision_voice_jobs.txt
+          else
+            if git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+              git diff --name-only "$BEFORE_SHA" HEAD -- voice_jobs/requests/ | grep -E '^voice_jobs/requests/[^/]+\.json$' > artvision_voice_jobs.txt || true
+            else
+              git ls-files 'voice_jobs/requests/*.json' > artvision_voice_jobs.txt
+            fi
+          fi
+          test -s artvision_voice_jobs.txt || { echo "No voice jobs"; exit 1; }
+      - name: Generate approved local voices from queued scripts
+        run: |
+          set -euo pipefail
+          while IFS= read -r file; do
+            test -f "$file" || { echo "Missing job: $file"; exit 2; }
+            python src/artvision_voice_autopilot_v1.py --job "$file" --out-root output/voice_autopilot
+          done < artvision_voice_jobs.txt
+      - name: Preserve audio, script, hash manifest for renderer handoff
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_VOICE_REVIEW_${{ github.run_id }}
+          path: output/voice_autopilot/
+          if-no-files-found: warn
+          retention-days: 30
