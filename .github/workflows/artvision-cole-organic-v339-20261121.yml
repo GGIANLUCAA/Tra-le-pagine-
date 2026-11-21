@@ -1,0 +1,41 @@
+name: ArtVision · Cole Destruction · Organic V339 Cinematic
+on:
+  push:
+    branches:
+      - feature/artvision-cole-destruction-organic-v339-20261121
+    paths:
+      - .github/workflows/artvision-cole-organic-v339-20261121.yml
+      - tools/artvision_cole_destruction_organic_v339.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render-original-organic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install visual/audio rendering tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+      - name: Produce verified authentic Thomas Cole reel with custom organic direction
+        run: python -u tools/artvision_cole_destruction_organic_v339.py
+      - name: Attach Android MP4 and complete package after QA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-COLE-DESTRUCTION-ORGANIC-V339-TRUE-MASTER
+          path: |
+            output/artvision_cole_destruction_v339/*.mp4
+            output/artvision_cole_destruction_v339/*.jpg
+            output/artvision_cole_destruction_v339/*.json
+            output/artvision_cole_destruction_v339/*.md
+            output/artvision_cole_destruction_v339/*.txt
+            output/artvision_cole_destruction_v339/dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
