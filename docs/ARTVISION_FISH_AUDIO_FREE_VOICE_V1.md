@@ -8,9 +8,9 @@ Questo è un prototipo su PR draft: provider Fish Audio e workflow di sintesi pr
 
 ## Setup 1 volta sola da Android
 
-1. Dopo aver creato una chiave API nel proprio account Fish Audio, entrare in https://github.com/GGIANLUCAA/Tra-le-pagine-/settings/secrets/actions e creare secret FISH_API_KEY (valore: chiave personale). Non comunicarla via chat.
+1. Verificato 21/11/2026: il Secret GitHub `SpeechtoText` è PRESENTE e l'autenticazione all'API Fish con GET /wallet/self/api-credit ha restituito HTTP 200 (senza generare audio e senza mostrare la chiave). Il workflow legge ora `secrets.FISH_API_KEY || secrets.SpeechtoText`, quindi non creare una seconda chiave né rinominare il Secret. Non comunicarla via chat.
 2. Nel sito https://fish.audio creare una voce personale privata dall'interfaccia di Voice Cloning usando una registrazione propria pulita, possibilmente 1–2 minuti con registrazioni espressive diverse; testarne una breve narrazione italiana. Il sito restituisce un Voice Model ID / reference_id. Se non appare, consultare la sezione My Voices oppure API docs di Fish.
-3. Creare un secondo GitHub Actions Secret: FISH_VOICE_ID (valore: riferimento del modello vocale scelto). Mai incollare l'id vocale in una repo pubblica per default.
+3. Manca ancora un secondo GitHub Actions Secret: FISH_VOICE_ID (valore: riferimento del modello vocale scelto). Mai incollare l'id vocale in una repo pubblica per default.
 4. In GitHub Settings > Secrets and variables > Actions > Variables, creare ARTVISION_FISH_VOICE_APPROVED = true **solo dopo l'ascolto e approvazione esplicita della voce**. Finché non è true, solo job review_only.
 5. Quando la PR sarà validata e unita a main, un job JSON sotto voice_jobs/fish_requests attiverà la GitHub Action automaticamente. Prima del merge, avvio manuale solo se il file job esiste nel ramo eseguito.
 
