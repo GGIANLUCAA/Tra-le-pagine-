@@ -131,6 +131,25 @@ DIRECTION = {
             ("detail", 10.6, 4, 5, 1.12, "End with a very gradual passage; no mandatory final full shot")
         ],
     },
+    "08_BRYULLOV_POMPEII": {
+        "concept": "The catastrophe first appears as an immense painting; then the camera discovers families, falling stone and the glow above Pompeii. The film ends with a human detail, not another obligatory reveal.",
+        "title_mode": "low",
+        "typography_seconds": 3.1,
+        "beats": [
+            ("whole", 5.8, None, None, None, "The whole authentic monumental canvas opens the film; audience sees what is happening immediately"),
+            ("approach", 4.2, None, None, None, "A gradual camera movement into the tragic event"),
+            ("detail", 4.0, 0, 0, 1.17, "Hold the frightened people in the foreground"),
+            ("detail", 6.8, 1, 2, 1.18, "A long movement across families, carrying the eye through the crowd"),
+            ("detail", 3.1, 3, 3, 1.29, "A still observation of the fallen woman"),
+            ("detail", 5.4, 4, 5, 1.16, "Rise from people towards the fiery light above the city"),
+            ("reveal", 3.6, None, None, None, "Pull out at the dramatic peak and restore the painting's full scale"),
+            ("whole", 9.4, None, None, None, "A long uninterrupted hold on the entire original: let the catastrophe register"),
+            ("approach", 4.2, None, None, None, "Return towards the center of the scene, without a formulaic edit"),
+            ("detail", 6.7, 5, 1, 1.13, "Trace the human motion across the original painting"),
+            ("detail", 3.5, 2, 2, 1.27, "Brief observation of the last figures against the collapsing architecture"),
+            ("detail", 5.0, 0, 0, 1.14, "A quiet human close, with no conventional closing-card or compulsory full canvas"),
+        ],
+    },
     # New subjects get their own researched plans after source approval.
     # Never silently generate a generic plan for an unfamiliar painting.
 }
