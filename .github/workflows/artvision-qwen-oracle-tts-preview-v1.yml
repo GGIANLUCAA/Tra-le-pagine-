@@ -1,4 +1,4 @@
-name: "ArtVision | Qwen Oracle ARM - private voice audition"
+name: "ArtVision | Qwen Oracle ARM - voice audition (public-repo artifact)"
 on:
   pull_request:
     paths:
@@ -15,7 +15,7 @@ on:
         default: ryan
         options: [ryan, vivian, serena, aiden, eric, dylan, uncle_fu, ono_anna, sohee]
       italian_text:
-        description: "Short Italian test narration (optional)"
+        description: "Testo NON riservato: il repo e gli artifact sono leggibili pubblicamente"
         required: false
         type: string
 permissions:
@@ -56,7 +56,7 @@ jobs:
           fi
       - name: Qwen audition - unapproved preview, no video changes
         run: python scripts/artvision_qwen_oracle_preview_v1.py
-      - name: Preserve voice preview to download on Android
+      - name: Publish NON-CONFIDENTIAL preview artifact for Android
         if: success()
         uses: actions/upload-artifact@v4
         with:
