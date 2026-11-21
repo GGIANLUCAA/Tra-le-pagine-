@@ -1,0 +1,45 @@
+name: ArtVision V340 · Thomas Cole TRUE source 8K master + 4K Android
+on:
+  push:
+    branches:
+      - feature/artvision-cole-v340-8k-source-rerender-20261121
+    paths:
+      - .github/workflows/artvision-cole-v340-quality.yml
+      - tools/artvision_cole_source_quality_v340.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    strategy:
+      fail-fast: false
+      matrix:
+        resolution: [4k,8k]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install source-resolution rendering tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3' 'opencv-python-headless>=4.8,<5'
+          ffmpeg -encoders | grep -E 'libx265|libx264'
+      - name: Render exact-source ${{ matrix.resolution }} full video
+        run: python -u tools/artvision_cole_source_quality_v340.py --mode ${{ matrix.resolution }}
+      - name: Upload true verified 4K/8K source master and report
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-COLE-V340-SOURCE-${{ matrix.resolution }}
+          path: |
+            output/artvision_cole_v340/${{ matrix.resolution }}/*.mp4
+            output/artvision_cole_v340/${{ matrix.resolution }}/*.jpg
+            output/artvision_cole_v340/${{ matrix.resolution }}/*.json
+            output/artvision_cole_v340/${{ matrix.resolution }}/*.txt
+            output/artvision_cole_v340/${{ matrix.resolution }}/dist/*.zip
+          if-no-files-found: error
+          retention-days: 30
