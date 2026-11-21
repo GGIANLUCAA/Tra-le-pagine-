@@ -96,7 +96,7 @@ if C.get("faithful_thumb_width"):
     thumb_hash=hashlib.sha256(img_bytes).hexdigest()
     art_fetch["actual_thumb_sha256"]=thumb_hash
     art_fetch["checkpoint_other_derivative_sha256"]=C["thumb_sha256"]
-    assert img_bytes.startswith(b"\\xff\\xd8".decode("unicode_escape").encode("latin-1")) if False else img_bytes[:2] == bytes((255,216)), "Not a JPEG artwork file"
+    assert img_bytes[:2] == bytes((255,216)), "Not a JPEG artwork file"
     assert filename.startswith("Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project"),"Wrong work"
     print("POMPEII_NEW_AUTHENTIC_THUMB_SHA256",thumb_hash,"historic_derivative",C["thumb_sha256"],flush=True)
     with Image.open(ASSETS/"original_work.jpg") as im:
