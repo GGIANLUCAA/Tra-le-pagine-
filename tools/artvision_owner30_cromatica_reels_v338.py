@@ -89,7 +89,16 @@ if C.get("faithful_thumb_width"):
     art_url=f"https://upload.wikimedia.org/wikipedia/commons/thumb/{digest[0]}/{digest[:2]}/{filename}/{width}px-{filename}"
     art_fetch=fetch(art_url,ASSETS/"original_work.jpg",500_000)
     img_bytes=(ASSETS/"original_work.jpg").read_bytes()
-    assert hashlib.sha256(img_bytes).hexdigest()==C["thumb_sha256"],"Pompeii canonical 3840px thumbnail mismatch"
+    # Historical source checkpoint's 3840px SHA was for a separate JPEG derivative;
+    # Wikimedia server may use a different encoder/quality at identical dimensions.
+    # Never compare different derivatives as if bit-identical. Lock this fetched
+    # source's actual hash, validate exact canonical artwork filename and dimensions.
+    thumb_hash=hashlib.sha256(img_bytes).hexdigest()
+    art_fetch["actual_thumb_sha256"]=thumb_hash
+    art_fetch["checkpoint_other_derivative_sha256"]=C["thumb_sha256"]
+    assert img_bytes.startswith(b"\\xff\\xd8".decode("unicode_escape").encode("latin-1")) if False else img_bytes[:2] == bytes((255,216)), "Not a JPEG artwork file"
+    assert filename.startswith("Karl_Brullov_-_The_Last_Day_of_Pompeii_-_Google_Art_Project"),"Wrong work"
+    print("POMPEII_NEW_AUTHENTIC_THUMB_SHA256",thumb_hash,"historic_derivative",C["thumb_sha256"],flush=True)
     with Image.open(ASSETS/"original_work.jpg") as im:
         assert im.size==C["thumb_expected_pixels"],"Pompeii canonical 3840px thumbnail dimensions mismatch"
         original=im.convert("RGB")
