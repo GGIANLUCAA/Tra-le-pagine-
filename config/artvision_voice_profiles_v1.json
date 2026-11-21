@@ -1,0 +1,23 @@
+{
+  "schema": "artvision-voice-profiles-v1",
+  "default_by_format": {
+    "critico_standard": "gacrux_approved",
+    "critico_museum": "gacrux_approved"
+  },
+  "profiles": {
+    "gacrux_approved": {
+      "engine": "existing_gemini",
+      "approved": true,
+      "model": "gemini-3.8-flash-tts",
+      "voice": "Gacrux",
+      "note": "Existing V333 pipeline only. This module never calls Gemini or substitutes its audio."
+    },
+    "qwen_owner_candidate": {
+      "engine": "qwen_local",
+      "approved": false,
+      "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
+      "language": "Italian",
+      "note": "Review candidate only until owner selects this actual cloned voice. No auto-substitution."
+    }
+  }
+}
