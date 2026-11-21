@@ -64,9 +64,14 @@ jobs:
       - name: Generate approved local voices from queued scripts
         run: |
           set -euo pipefail
+          cache_root="${ARTVISION_VOICE_OUTPUT_ROOT:-$HOME/.artvision/voice_cache}"
+          mkdir -p "$cache_root" output/voice_autopilot
           while IFS= read -r file; do
             test -f "$file" || { echo "Missing job: $file"; exit 2; }
-            python src/artvision_voice_autopilot_v1.py --job "$file" --out-root output/voice_autopilot
+            python src/artvision_voice_autopilot_v1.py --job "$file" --out-root "$cache_root"
+            work_id="$(python -c 'import json,sys;print(json.load(open(sys.argv[1]))["work_id"])' "$file")"
+            mkdir -p "output/voice_autopilot/$work_id"
+            cp -f "$cache_root/$work_id/VOCE.wav" "$cache_root/$work_id/VOCE.mp3" "$cache_root/$work_id/COPIONE.txt" "$cache_root/$work_id/VOICE_MANIFEST.json" "output/voice_autopilot/$work_id/"
           done < artvision_voice_jobs.txt
       - name: Preserve audio, script, hash manifest for renderer handoff
         if: always()
