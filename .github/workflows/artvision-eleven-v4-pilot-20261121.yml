@@ -54,6 +54,28 @@ jobs:
           python-version: "3.11"
       - name: Install only open-source local image verification packages
         run: python -m pip install --disable-pip-version-check 'Pillow>=10,<13'
+      - name: Recover SHA-verified original artwork and licensed audio from existing GitHub artifact V131
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359/zip" > "$RUNNER_TEMP/artvision_original_v131.zip"
+          SRC_ZIP="$RUNNER_TEMP/artvision_original_v131.zip" python - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          source = pathlib.Path(os.environ["SRC_ZIP"])
+          dest = pathlib.Path("output/eleven_v4_bruegel_preview")
+          dest.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(source) as z:
+              for filename, target, expected in [
+                  ("ORIGINAL_ARTWORK.jpg", "ORIGINAL_ARTWORK.jpg", "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"),
+                  ("ORIGINAL_LICENSED_MUSIC.mp3", "ORIGINAL_LICENSED_MUSIC.mp3", "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573")
+              ]:
+                  data = z.read(filename)
+                  assert hashlib.sha256(data).hexdigest() == expected, "Source artifact SHA mismatch"
+                  (dest / target).write_bytes(data)
+          print("SOURCE_AND_LICENSED_MUSIC_REUSED_FROM_EXISTING_ARTIFACT_SHA_PASS")
+          PY
       - name: Recover original painting and SHA verify before spending anything
         continue-on-error: true
         run: python src/artvision_eleven_v4_pilot_v1.py --stage preflight
@@ -87,6 +109,28 @@ jobs:
           python -m pip install --disable-pip-version-check 'Pillow>=10,<13' 'numpy>=1.26,<3'
           command -v ffmpeg
           command -v ffprobe
+      - name: Recover SHA-verified original artwork and licensed audio from existing GitHub artifact V131
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/actions/artifacts/12775741359/zip" > "$RUNNER_TEMP/artvision_original_v131.zip"
+          SRC_ZIP="$RUNNER_TEMP/artvision_original_v131.zip" python - <<'PY'
+          import hashlib, os, pathlib, zipfile
+          source = pathlib.Path(os.environ["SRC_ZIP"])
+          dest = pathlib.Path("output/eleven_v4_bruegel_preview")
+          dest.mkdir(parents=True, exist_ok=True)
+          with zipfile.ZipFile(source) as z:
+              for filename, target, expected in [
+                  ("ORIGINAL_ARTWORK.jpg", "ORIGINAL_ARTWORK.jpg", "09f675e7861da808ede4bc1f85573e97884fdbcc6c1d6cb482e3e449d58aace5"),
+                  ("ORIGINAL_LICENSED_MUSIC.mp3", "ORIGINAL_LICENSED_MUSIC.mp3", "00a2fee94641761f37e74973eaaa654e1a8a628269f585707d46987558d07573")
+              ]:
+                  data = z.read(filename)
+                  assert hashlib.sha256(data).hexdigest() == expected, "Source artifact SHA mismatch"
+                  (dest / target).write_bytes(data)
+          print("SOURCE_AND_LICENSED_MUSIC_REUSED_FROM_EXISTING_ARTIFACT_SHA_PASS")
+          PY
       - name: Never allow generation without the deliberate single-preview confirmation
         run: |
           if [ "$RUN_MODE" = "generate" ] && [ "$ARTVISION_ELEVEN_ALLOW_ONE_CALL" != "ONE_PREVIEW_ONLY" ]; then
