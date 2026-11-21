@@ -1,0 +1,46 @@
+name: ArtVision Owner 30 · Pompeii · Cromatica V338 New Director
+on:
+  push:
+    branches:
+      - feature/artvision-owner30-pompeii-cromatica-v338-20261121
+    paths:
+      - .github/workflows/artvision-pompeii-cromatica-v338-20261121.yml
+      - tools/artvision_owner30_cromatica_reels_v338.py
+      - tools/artvision_cromatica_director_v338.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-artwork-reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install video and image QA tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          python -m pip install --disable-pip-version-check 'pillow>=10,<13' 'requests>=2.31,<3' 'numpy>=1.26,<3'
+      - name: Render NEW V338 original Pompeii painting video with unique directing
+        run: python -u tools/artvision_owner30_cromatica_reels_v338.py --index 7
+      - name: Upload verified MP4 with sound, music-ready master, QA and ZIP
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION-BRYULLOV-POMPEII-NEW-CROMATICA-V338
+          path: |
+            output/artvision_owner30_cromatica_v338/*/*_ARTVISION_REEL.mp4
+            output/artvision_owner30_cromatica_v338/*/*_META_SENZA_MUSICA.mp4
+            output/artvision_owner30_cromatica_v338/*/*_COVER.jpg
+            output/artvision_owner30_cromatica_v338/*/*_QA.jpg
+            output/artvision_owner30_cromatica_v338/*/QA_AND_EDIT.json
+            output/artvision_owner30_cromatica_v338/*/SOURCES_AND_RIGHTS.md
+            output/artvision_owner30_cromatica_v338/*/POST_*.txt
+            output/artvision_owner30_cromatica_v338/*/dist/*_COMPLETO.zip
+            output/artvision_owner30_cromatica_v338/*/dist/*_ANDROID.zip
+            output/artvision_owner30_cromatica_v338/*/dist/*_META.zip
+          if-no-files-found: error
+          retention-days: 30
