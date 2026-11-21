@@ -1,23 +1,18 @@
 {
   "schema": "artvision-voice-profiles-v1",
+  "goal": "Android browser only. No Google or local PC in new voice queue.",
   "default_by_format": {
-    "critico_standard": "gacrux_approved",
-    "critico_museum": "gacrux_approved"
+    "critico_standard": "qwen_hf_candidate",
+    "critico_museum": "qwen_hf_candidate"
   },
   "profiles": {
-    "gacrux_approved": {
-      "engine": "existing_gemini",
-      "approved": true,
-      "model": "gemini-3.8-flash-tts",
-      "voice": "Gacrux",
-      "note": "Existing V333 pipeline only. This module never calls Gemini or substitutes its audio."
-    },
-    "qwen_owner_candidate": {
-      "engine": "qwen_local",
-      "approved": false,
+    "qwen_hf_candidate": {
+      "engine": "hf_zerogpu",
       "model": "Qwen/Qwen3-TTS-12Hz-1.7B-Base",
-      "language": "Italian",
-      "note": "Review candidate only until owner selects this actual cloned voice. No auto-substitution."
+      "approved": false,
+      "review_samples_allowed": true,
+      "language": "Auto",
+      "note": "Cloned-voice draft. Only 350-character review samples before approval. Free-only Hugging Face ZeroGPU, no guaranteed daily throughput."
     }
   }
 }
