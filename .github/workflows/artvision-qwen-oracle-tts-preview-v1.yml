@@ -1,0 +1,66 @@
+name: "ArtVision | Qwen Oracle ARM - private voice audition"
+on:
+  pull_request:
+    paths:
+      - "src/artvision_qwen_oracle_tts_v1.py"
+      - "scripts/artvision_qwen_oracle_preview_v1.py"
+      - "tests/test_artvision_qwen_oracle_tts_v1.py"
+      - ".github/workflows/artvision-qwen-oracle-tts-preview-v1.yml"
+  workflow_dispatch:
+    inputs:
+      speaker:
+        description: "Preset voice, for audition only"
+        type: choice
+        required: true
+        default: ryan
+        options: [ryan, vivian, serena, aiden, eric, dylan, uncle_fu, ono_anna, sohee]
+      italian_text:
+        description: "Short Italian test narration (optional)"
+        required: false
+        type: string
+permissions:
+  contents: read
+jobs:
+  offline_tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Python unit tests - no network and no account access
+        run: python -m unittest discover -s tests -p 'test_artvision_qwen_oracle_tts_v1.py' -v
+
+  audition:
+    needs: offline_tests
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ARTVISION_QWEN_TTS_URL: ${{ secrets.ARTVISION_QWEN_TTS_URL }}
+      ARTVISION_QWEN_TTS_TOKEN: ${{ secrets.ARTVISION_QWEN_TTS_TOKEN }}
+      ARTVISION_QWEN_PREVIEW_TEXT: ${{ inputs.italian_text }}
+      ARTVISION_QWEN_SPEAKER: ${{ inputs.speaker }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check secured Oracle endpoint configured
+        shell: bash
+        run: |
+          if [ -z "$ARTVISION_QWEN_TTS_URL" ] || [ -z "$ARTVISION_QWEN_TTS_TOKEN" ]; then
+            echo "::error::Secure Oracle endpoint not configured in Actions secrets."
+            exit 1
+          fi
+      - name: Qwen audition - unapproved preview, no video changes
+        run: python scripts/artvision_qwen_oracle_preview_v1.py
+      - name: Preserve voice preview to download on Android
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ARTVISION_QWEN_ORACLE_PROVINO_${{ github.run_id }}
+          path: output/qwen-oracle-preview/
+          retention-days: 14
+          if-no-files-found: error
