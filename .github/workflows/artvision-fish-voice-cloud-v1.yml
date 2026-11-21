@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 50
     env:
-      FISH_API_KEY: ${{ secrets.FISH_API_KEY }}
+      FISH_API_KEY: ${{ secrets.FISH_API_KEY || secrets.SpeechtoText }}
       FISH_VOICE_ID: ${{ secrets.FISH_VOICE_ID }}
       ARTVISION_FISH_VOICE_APPROVED: ${{ vars.ARTVISION_FISH_VOICE_APPROVED }}
       EVENT_NAME: ${{ github.event_name }}
