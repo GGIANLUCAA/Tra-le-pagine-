@@ -5,7 +5,7 @@
   "format": "reel_cromatica_independent_new_variant_not_4x1",
   "production_run_id": 44834212644,
   "source_verification": "exact prior-owner30 SHA1/pixels/bytes where available, copyrighted photo credit recorded",
-  "technical_qa": "7 original V337 MP4s plus 2 new V338 MP4s: ffprobe + all-stream decoding in GitHub, verified package ZIP CRC and local SHA256 readback",
+  "technical_qa": "10 genuine new Cromatica variants, latest Cole V339 independently downloaded and checked",
   "publication_status": "PRIVATE_ARTISTIC_APPROVAL_AND_TERRITORIAL_RIGHTS_PENDING",
   "external_cost": 0,
   "selected": [
@@ -97,8 +97,8 @@
       "autore": "Edward Burne-Jones",
       "opera": "King Arthur in Avalon",
       "cromatica": {
-        "status": "PENDING_NEW_CROMATICA",
-        "next_action": "Verify exact painting photograph, source rights and build separate new cromatica reel"
+        "status": "PENDING_NEW_CROMATICA_SOURCE_QUALITY",
+        "next_action": "Only use a faithful high-quality color original with validated photo reuse; archived Commons scan is editorially color/desaturation-modified and not suitable as definitive authentic master; continue to next eligible title."
       }
     },
     {
@@ -106,8 +106,23 @@
       "autore": "Thomas Cole",
       "opera": "The Course of Empire: Destruction",
       "cromatica": {
-        "status": "PENDING_NEW_CROMATICA",
-        "next_action": "Verify exact painting photograph, source rights and build separate new cromatica reel"
+        "status": "RENDERED_QA_PASS_NEEDS_ARTISTIC_REVIEW",
+        "slug": "10_COLE_DESTRUCTION_V339_ORGANIC",
+        "duration_seconds": 75,
+        "scene_count": 13,
+        "individualized_pin_count": 8,
+        "visual_transitions": "7 selected soft dissolves + matched continuous camera and two whole-art pullouts",
+        "full_art_hold_seconds": 10.9,
+        "run_id": 44893047106,
+        "artifact_id": 14702886513,
+        "mp4_sha256": "cf8726c4523dcdf8c2521b08983490be86c590ab498a7622dc3acbadc6ba2a5c",
+        "original_image_sha256": "070c09253e7ff70639817a8790d10ea67b8de0f54f6020625e7b74b1be200cb9",
+        "soundtrack": "The Descent — Kevin MacLeod, USUAN1200094, CC BY 4.0, attribution in package",
+        "format": "new distinct V339 organic cinematic variant, separate from 4×1",
+        "technical_qa": "GitHub full decode PASS; independent local full decode PASS, ffprobe H264/AAC, no black intervals, volume max -1.7dB, outer and nested ZIP CRC PASS",
+        "artistic_approval": false,
+        "published": false,
+        "commercial_territorial_clearance": "PENDING"
       }
     },
     {
@@ -303,9 +318,9 @@
       }
     }
   ],
-  "completed_count": 9,
-  "pending_count": 21,
-  "next_owner_order": 8,
+  "completed_count": 10,
+  "pending_count": 20,
+  "next_owner_order": 10,
   "notices": [
     "Existing Cinema/Museum/Critico 4x1 versions are not replaced or counted as new; this is a new reel family.",
     "Never change approved original soundtrack/voice or invent AI painting; use real music and the entire authentic artwork.",
@@ -320,5 +335,8 @@
     "873fec594cb234aef77b7e0ce91e4ff15fd47547fa95b531b207bc42b50c7829",
     "95d558115211137323e87aa85afb5b1d46365e668522a5e3860fb8e878c80307"
   ],
-  "delivery": "Two new private V338 videos delivered as verified MP4 and Android ZIP; originals kept untouched"
+  "delivery": "Two new private V338 videos delivered as verified MP4 and Android ZIP; originals kept untouched",
+  "latest_new_regia": "V339 Organic Cinematic",
+  "latest_production_run_id": 44893047106,
+  "last_new_master_private": true
 }
