@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib,io,json,math,os,subprocess,time,zipfile
 from pathlib import Path
 import requests
+import cv2
 import numpy as np
 from PIL import Image,ImageDraw,ImageFont,ImageFilter,ImageEnhance,ImageOps
 
@@ -66,12 +67,13 @@ FILL=max(W/IW,H/IH)
 FIT=min(W/IW,H/IH)
 WHOLE_Z=FIT/FILL
 CACHE={}
+SOURCE_RGB_NUMPY=np.asarray(canvas,dtype=np.uint8)
 def painted_view(cx,cy,z):
     # z = 1 fills the vertical screen; z ≈ 0.35 displays the entire ORIGINAL painting.
     key=round(z,4)
     if key not in CACHE:
         w=max(1,round(IW*FILL*z));h=max(1,round(IH*FILL*z))
-        CACHE[key]=canvas.resize((w,h),Image.Resampling.LANCZOS)
+        CACHE[key]=Image.fromarray(cv2.resize(SOURCE_RGB_NUMPY,(w,h),interpolation=cv2.INTER_LINEAR),'RGB')
         if len(CACHE)>50:CACHE.pop(next(iter(CACHE)))
     art=CACHE[key]
     aw,ah=art.size
